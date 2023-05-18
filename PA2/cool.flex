@@ -45,35 +45,80 @@ extern int verbose_flag;
 
 extern YYSTYPE cool_yylval;
 
+
 /*
  *  Add Your own definitions here
  */
 
+
+
 %}
 
-/*
- * Define names for regular expressions here.
- */
-
+CLASS           (?i:class)
+IF              (?i:if)
+THEN            (?i:then)
+ELSE            (?i:else)
+FI              (?i:fi)
+IN              (?i:in)
+INHERITS        (?i:inherits)
+ISVOID          (?i:isvoid)
+LET             (?i:let)
+LOOP            (?i:loop)
+POOL            (?i:pool)
+WHILE           (?i:while)
+CASE            (?i:case)
+ESAC            (?i:esac)
+NEW             (?i:new)
+OF              (?i:of)
+NOT             (?i:not)
+TRUE            t(?i:rue)
+FALSE           f(?i:alse)
+SELF            self
+SELF_TYPE       SELF_TYPE
+DELIM           [ \n\f\r\t\v]
+WHITESPACE      {DELIM}+
+DIGIT           [0-9]
+LETTER          [a-zA-Z]
 DARROW          =>
 
 %%
 
- /*
-  *  Nested comments
-  */
-
-
- /*
-  *  The multiple-character operators.
-  */
-{DARROW}		{ return (DARROW); }
-
- /*
-  * Keywords are case-insensitive except for the values true and false,
-  * which must begin with a lower-case letter.
-  */
-
+{CLASS}		        { return CLASS; }
+{IF}		          { return IF; }
+{THEN}		        { return THEN; }
+{ELSE}		        { return ELSE; }
+{FI}		          { return FI; }
+{IN}		          { return IN; }
+{INHERITS}		    { return INHERITS; }
+{ISVOID}		      { return ISVOID; }
+{LET}		          { return LET; }
+{LOOP}		        { return LOOP; }
+{POOL}		        { return POOL; }
+{WHILE}		        { return WHILE; }
+{CASE}		        { return CASE; }
+{ESAC}		        { return ESAC; }
+{NEW}		          { return NEW; }
+{OF}		          { return OF; }
+{NOT}		          { return NOT; }
+/* true		        { return NOT; } */
+/* false		      { return NOT; } */
+{SELF}		        { return SELF; }
+{SELF_TYPE}		    { return SELF_TYPE; }
+"Integer"		      { return "INTEGER"; }
+"Bool"		        { return "BOOL"; }
+"String		        { return "STRING"; }
+"<-"              { return "ASSIGN"; }
+":"               { return "COLON"; }
+";"               { return "SEMICOLON"; }
+"=>"              { return "CASE THING"; }
+"("               { return "OPEN_PAR"; }
+")"               { return "CLOSE_PAR"; }
+"{"               { return "OPEN_BRA"; }
+"}"               { return "CLOSE_BRA"; }
+"+"               { return "PLUS"; }
+"-"               { return "MINUS"; }
+{WHITESPACE}		  {  }
+{DARROW}		      { return DARROW; }
 
  /*
   *  String constants (C syntax)
@@ -81,6 +126,5 @@ DARROW          =>
   *  \n \t \b \f, the result is c.
   *
   */
-
 
 %%
