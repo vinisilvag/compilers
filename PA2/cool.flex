@@ -49,6 +49,8 @@ extern YYSTYPE cool_yylval;
  *  Add Your own definitions here
  */
 
+int commentLevel = 0;
+
 %}
 
 %START COMMENT
@@ -74,39 +76,72 @@ NOT             (?i:not)
 TRUE            t(?i:rue)
 FALSE           f(?i:alse)
 
-DELIM           [ \n\f\r\t\v]
+DELIM           [ \t\b\r\f\v]
 WHITESPACE      {DELIM}+
 DIGIT           [0-9]
 LETTER          [a-zA-Z]
 ALPHANUM        [0-9a-zA-Z]
-TYPEID          [A-Z]({ALPHANUM} | _)*
-OBJECTID        [a-z]({ALPHANUM} | _)*
+IDSUFFIX        [0-9a-zA-Z_]
+TYPEID          [A-Z]{IDSUFFIX}*
+OBJECTID        [a-z]{IDSUFFIX}*
 
 %%
 
-"\n"            { curr_lineno += 1; }
-{WHITESPACE}	 {  }
+<INITIAL,COMMENT>\n {
+   curr_lineno += 1;
+}
 
-"@"             { return ("@"); }
-"~"             { return ("~"); }
-"+"             { return ("+"); }
-"-"             { return ("-"); }
-"*"             { return ("*"); }
-"/"             { return ("/"); }
+<INITIAL>{WHITESPACE} ;
 
-"="             { return ("="); }
-"<-"            { return ("<-"); }
-"<"             { return ("<"); }
-"<="            { return ("<="); }
-"=>"            { return ("=>"); }
+<INITIAL>--.* ;
 
-"("             { return ("("); }
-")"             { return (")"); }
-"{"             { return ("{"); }
-"}"             { return ("}"); }
-"."             { return ("."); }
-":"             { return (":"); }
-";"             { return (";"); }
+<INITIAL,COMMENT>"(*" {
+   commentLevel += 1;
+   BEGIN COMMENT;
+}
+
+<INITIAL,COMMENT>"*)" {
+   commentLevel -= 1;
+
+   if(commentLevel == 0) {
+      BEGIN INITIAL;
+   } else if(commentLevel == -1) {
+      yylval.error_msg = "Unmatched *)";
+      commentLevel = 0;
+      return (ERROR);
+   }
+}
+
+<COMMENT>"("/[^*] ;
+
+<COMMENT>"*"/[^)] ;
+
+<COMMENT><<EOF>> {
+   BEGIN INITIAL;
+   cool_yylval.error_msg = "EOF in comment";
+   return (ERROR);
+}
+
+"@"             { return ('@'); }
+"~"             { return ('~'); }
+"+"             { return ('+'); }
+"-"             { return ('-'); }
+"*"             { return ('*'); }
+"/"             { return ('/'); }
+
+"="             { return ('='); }
+"<-"            { return (ASSIGN); }
+"<"             { return ('<'); }
+"<="            { return (LE); }
+"=>"            { return (DARROW); }
+
+"("             { return ('('); }
+")"             { return (')'); }
+"{"             { return ('{'); }
+"}"             { return ('}'); }
+"."             { return ('.'); }
+":"             { return (':'); }
+";"             { return (';'); }
 
 {CLASS}		    { return (CLASS); }
 {IF}		       { return (IF); }
