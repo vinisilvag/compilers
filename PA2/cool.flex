@@ -50,6 +50,9 @@ extern YYSTYPE cool_yylval;
  */
 
 int commentLevel = 0;
+std::string readString = "";
+int readStringLength = 0;
+int readNullToken = 0;
 
 %}
 
@@ -112,13 +115,57 @@ OBJECTID        [a-z]{IDSUFFIX}*
    }
 }
 
+<COMMENT>[^\n(*]* {}
+
 <COMMENT>"("/[^*] ;
 
 <COMMENT>"*"/[^)] ;
 
 <COMMENT><<EOF>> {
    BEGIN INITIAL;
-   cool_yylval.error_msg = "EOF in comment";
+   yylval.error_msg = "EOF in comment";
+   return (ERROR);
+}
+
+<INITIAL>\" {
+   BEGIN STRING;
+   readString = "";
+   readStringLength = 0;
+   readNullToken = 0;
+}
+
+<STRING>\0 {
+   readNullToken = 1;
+}
+
+<STRING>\" {
+   BEGIN(INITIAL);
+
+   if(readNullToken == 1) {
+      BEGIN(INITIAL);
+      yylval.error_msg = "String contains null character";
+      return (ERROR);
+   }
+
+   if(readStringLength >= MAX_STR_CONST) {
+      yylval.error_msg = "String constant too long";
+      return (ERROR);
+   }
+
+   cool_yylval.symbol = stringtable.add_string((char *) readString.c_str());
+   return (STR_CONST);
+}
+
+<STRING>\n {
+   BEGIN(INITIAL);
+   curr_lineno += 1;
+   yylval.error_msg = "Unterminated string constant";
+   return (ERROR);
+}
+
+<STRING><<EOF>> {
+   BEGIN(INITIAL);
+   yylval.error_msg = "EOF in string constant";
    return (ERROR);
 }
 
