@@ -56,9 +56,6 @@ int readNullToken = 0;
 
 %}
 
-%START COMMENT
-%START STRING
-
 CLASS           (?i:class)
 IF              (?i:if)
 THEN            (?i:then)
@@ -79,7 +76,7 @@ NOT             (?i:not)
 TRUE            t(?i:rue)
 FALSE           f(?i:alse)
 
-DELIM           [ \t\b\r\f\v]
+DELIM           [ \t\r\f\v]
 WHITESPACE      {DELIM}+
 DIGIT           [0-9]
 LETTER          [a-zA-Z]
@@ -88,43 +85,46 @@ IDSUFFIX        [0-9a-zA-Z_]
 TYPEID          [A-Z]{IDSUFFIX}*
 OBJECTID        [a-z]{IDSUFFIX}*
 
+%START MULTILINE_COMMENT
+%START SINGLELINE_COMMENT
+%START STRING
+
 %%
 
-<INITIAL,COMMENT>\n {
-   curr_lineno += 1;
-}
-
-<INITIAL>{WHITESPACE} ;
-
-<INITIAL>--.* ;
-
-<INITIAL,COMMENT>"(*" {
+<INITIAL,MULTILINE_COMMENT,SINGLELINE_COMMENT>"(*" {
    commentLevel += 1;
-   BEGIN COMMENT;
+   BEGIN MULTILINE_COMMENT;
 }
 
-<INITIAL,COMMENT>"*)" {
+<MULTILINE_COMMENT>[^\n(*]* {}
+
+<MULTILINE_COMMENT>[()*] {}
+
+<MULTILINE_COMMENT>"*)" {
    commentLevel -= 1;
-
-   if(commentLevel == 0) {
-      BEGIN INITIAL;
-   } else if(commentLevel == -1) {
-      yylval.error_msg = "Unmatched *)";
-      commentLevel = 0;
-      return (ERROR);
-   }
+   if(commentLevel == 0) BEGIN INITIAL;
 }
 
-<COMMENT>[^\n(*]* {}
-
-<COMMENT>"("/[^*] ;
-
-<COMMENT>"*"/[^)] ;
-
-<COMMENT><<EOF>> {
+<MULTILINE_COMMENT><<EOF>> {
    BEGIN INITIAL;
    yylval.error_msg = "EOF in comment";
    return (ERROR);
+}
+
+"*)" {
+   yylval.error_msg = "Unmatched *)";
+   return (ERROR);
+}
+
+<INITIAL>"--" {
+   BEGIN SINGLELINE_COMMENT;
+}
+
+<SINGLELINE_COMMENT>[^\n]* {}
+
+<SINGLELINE_COMMENT>\n {
+   curr_lineno += 1;
+   BEGIN INITIAL;
 }
 
 <INITIAL>\" {
@@ -134,15 +134,53 @@ OBJECTID        [a-z]{IDSUFFIX}*
    readNullToken = 0;
 }
 
+<STRING>[^\n\0"\\]* {
+   readString += yytext;
+   readStringLength += 1;
+}
+
+<STRING>\\(.|\n) {
+   switch(yytext[1]) {
+      case '\n':
+         curr_lineno += 1;
+         readString += '\n';
+         break; 
+      case 'n':
+         readString += '\n';
+         break; 
+      case 't':
+         readString += '\t';
+         break; 
+      case 'f':
+         readString += '\f';
+         break; 
+      case 'b':
+         readString += '\b';
+         break; 
+      case '\0': 
+         readNullToken = 1;
+         break;
+      default:
+         readString += yytext[1];
+         break;
+   }
+}
+
 <STRING>\0 {
    readNullToken = 1;
 }
 
+<STRING>\n {
+   BEGIN INITIAL;
+   curr_lineno += 1;
+   yylval.error_msg = "Unterminated string constant";
+   return (ERROR);
+}
+
 <STRING>\" {
-   BEGIN(INITIAL);
+   BEGIN INITIAL;
 
    if(readNullToken == 1) {
-      BEGIN(INITIAL);
       yylval.error_msg = "String contains null character";
       return (ERROR);
    }
@@ -152,19 +190,12 @@ OBJECTID        [a-z]{IDSUFFIX}*
       return (ERROR);
    }
 
-   cool_yylval.symbol = stringtable.add_string((char *) readString.c_str());
+   yylval.symbol = stringtable.add_string((char *) readString.c_str());
    return (STR_CONST);
 }
 
-<STRING>\n {
-   BEGIN(INITIAL);
-   curr_lineno += 1;
-   yylval.error_msg = "Unterminated string constant";
-   return (ERROR);
-}
-
 <STRING><<EOF>> {
-   BEGIN(INITIAL);
+   BEGIN INITIAL;
    yylval.error_msg = "EOF in string constant";
    return (ERROR);
 }
@@ -187,6 +218,7 @@ OBJECTID        [a-z]{IDSUFFIX}*
 "{"             { return ('{'); }
 "}"             { return ('}'); }
 "."             { return ('.'); }
+","             { return (','); }
 ":"             { return (':'); }
 ";"             { return (';'); }
 
@@ -208,13 +240,16 @@ OBJECTID        [a-z]{IDSUFFIX}*
 {OF}		       { return (OF); }
 {NOT}		       { return (NOT); }
 
-{TRUE}          { cool_yylval.boolean = 1; return (BOOL_CONST); }
-{FALSE}         { cool_yylval.boolean = 0; return (BOOL_CONST); }
+{TRUE}          { yylval.boolean = 1; return (BOOL_CONST); }
+{FALSE}         { yylval.boolean = 0; return (BOOL_CONST); }
 
-{DIGIT}         { cool_yylval.symbol = inttable.add_string(yytext); return (INT_CONST); }
+{DIGIT}+        { yylval.symbol = inttable.add_string(yytext); return (INT_CONST); }
 
-{TYPEID}        { cool_yylval.symbol = idtable.add_string(yytext); return (TYPEID); }
-{OBJECTID}      { cool_yylval.symbol = idtable.add_string(yytext); return (OBJECTID); }
+{TYPEID}        { yylval.symbol = idtable.add_string(yytext); return (TYPEID); }
+{OBJECTID}      { yylval.symbol = idtable.add_string(yytext); return (OBJECTID); }
+
+\n              { curr_lineno += 1; }
+{WHITESPACE}    {  }
 
 .               { yylval.error_msg = yytext; return (ERROR); }
 
