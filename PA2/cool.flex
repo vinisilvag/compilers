@@ -45,14 +45,14 @@ extern int verbose_flag;
 
 extern YYSTYPE cool_yylval;
 
-
 /*
  *  Add Your own definitions here
  */
 
-
-
 %}
+
+%START COMMENT
+%START STRING
 
 CLASS           (?i:class)
 IF              (?i:if)
@@ -73,58 +73,67 @@ OF              (?i:of)
 NOT             (?i:not)
 TRUE            t(?i:rue)
 FALSE           f(?i:alse)
-SELF            self
-SELF_TYPE       SELF_TYPE
+
 DELIM           [ \n\f\r\t\v]
 WHITESPACE      {DELIM}+
 DIGIT           [0-9]
 LETTER          [a-zA-Z]
-DARROW          =>
+ALPHANUM        [0-9a-zA-Z]
+TYPEID          [A-Z]({ALPHANUM} | _)*
+OBJECTID        [a-z]({ALPHANUM} | _)*
 
 %%
 
-{CLASS}		        { return CLASS; }
-{IF}		          { return IF; }
-{THEN}		        { return THEN; }
-{ELSE}		        { return ELSE; }
-{FI}		          { return FI; }
-{IN}		          { return IN; }
-{INHERITS}		    { return INHERITS; }
-{ISVOID}		      { return ISVOID; }
-{LET}		          { return LET; }
-{LOOP}		        { return LOOP; }
-{POOL}		        { return POOL; }
-{WHILE}		        { return WHILE; }
-{CASE}		        { return CASE; }
-{ESAC}		        { return ESAC; }
-{NEW}		          { return NEW; }
-{OF}		          { return OF; }
-{NOT}		          { return NOT; }
-/* true		        { return NOT; } */
-/* false		      { return NOT; } */
-{SELF}		        { return SELF; }
-{SELF_TYPE}		    { return SELF_TYPE; }
-"Integer"		      { return "INTEGER"; }
-"Bool"		        { return "BOOL"; }
-"String		        { return "STRING"; }
-"<-"              { return "ASSIGN"; }
-":"               { return "COLON"; }
-";"               { return "SEMICOLON"; }
-"=>"              { return "CASE THING"; }
-"("               { return "OPEN_PAR"; }
-")"               { return "CLOSE_PAR"; }
-"{"               { return "OPEN_BRA"; }
-"}"               { return "CLOSE_BRA"; }
-"+"               { return "PLUS"; }
-"-"               { return "MINUS"; }
-{WHITESPACE}		  {  }
-{DARROW}		      { return DARROW; }
+"\n"            { curr_lineno += 1; }
+{WHITESPACE}	 {  }
 
- /*
-  *  String constants (C syntax)
-  *  Escape sequence \c is accepted for all characters c. Except for 
-  *  \n \t \b \f, the result is c.
-  *
-  */
+"@"             { return ("@"); }
+"~"             { return ("~"); }
+"+"             { return ("+"); }
+"-"             { return ("-"); }
+"*"             { return ("*"); }
+"/"             { return ("/"); }
+
+"="             { return ("="); }
+"<-"            { return ("<-"); }
+"<"             { return ("<"); }
+"<="            { return ("<="); }
+"=>"            { return ("=>"); }
+
+"("             { return ("("); }
+")"             { return (")"); }
+"{"             { return ("{"); }
+"}"             { return ("}"); }
+"."             { return ("."); }
+":"             { return (":"); }
+";"             { return (";"); }
+
+{CLASS}		    { return (CLASS); }
+{IF}		       { return (IF); }
+{THEN}		    { return (THEN); }
+{ELSE}		    { return (ELSE); }
+{FI}		       { return (FI); }
+{IN}		       { return (IN); }
+{INHERITS}		 { return (INHERITS); }
+{ISVOID}		    { return (ISVOID); }
+{LET}		       { return (LET); }
+{LOOP}		    { return (LOOP); }
+{POOL}		    { return (POOL); }
+{WHILE}		    { return (WHILE); }
+{CASE}		    { return (CASE); }
+{ESAC}		    { return (ESAC); }
+{NEW}		       { return (NEW); }
+{OF}		       { return (OF); }
+{NOT}		       { return (NOT); }
+
+{TRUE}          { cool_yylval.boolean = 1; return (BOOL_CONST); }
+{FALSE}         { cool_yylval.boolean = 0; return (BOOL_CONST); }
+
+{DIGIT}         { cool_yylval.symbol = inttable.add_string(yytext); return (INT_CONST); }
+
+{TYPEID}        { cool_yylval.symbol = idtable.add_string(yytext); return (TYPEID); }
+{OBJECTID}      { cool_yylval.symbol = idtable.add_string(yytext); return (OBJECTID); }
+
+.               { yylval.error_msg = yytext; return (ERROR); }
 
 %%
