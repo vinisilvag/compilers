@@ -1879,7 +1879,7 @@ case YY_STATE_EOF(MULTILINE_COMMENT):
 #line 107 "cool.flex"
 {
    BEGIN INITIAL;
-   yylval.error_msg = "EOF in comment";
+   strcpy(yylval.error_msg, "EOF in comment");
    return (ERROR);
 }
 	YY_BREAK
@@ -1887,7 +1887,7 @@ case 5:
 YY_RULE_SETUP
 #line 113 "cool.flex"
 {
-   yylval.error_msg = "Unmatched *)";
+   strcpy(yylval.error_msg, "Unmatched *)");
    return (ERROR);
 }
 	YY_BREAK
@@ -1966,7 +1966,7 @@ YY_RULE_SETUP
 {
    BEGIN INITIAL;
    curr_lineno += 1;
-   yylval.error_msg = "Unterminated string constant";
+   strcpy(yylval.error_msg, "Unterminated string constant");
    return (ERROR);
 }
 	YY_BREAK
@@ -1984,12 +1984,12 @@ YY_RULE_SETUP
    BEGIN INITIAL;
 
    if(readNullToken == 1) {
-      yylval.error_msg = "String contains null character";
+      strcpy(yylval.error_msg, "String contains null character");
       return (ERROR);
    }
 
    if(readString.length() >= MAX_STR_CONST) {
-      yylval.error_msg = "String constant too long";
+      strcpy(yylval.error_msg, "String constant too long");
       return (ERROR);
    }
 
@@ -2001,7 +2001,7 @@ case YY_STATE_EOF(STRING):
 #line 194 "cool.flex"
 {
    BEGIN INITIAL;
-   yylval.error_msg = "EOF in string constant";
+   strcpy(yylval.error_msg, "EOF in string constant");
    return (ERROR);
 }
 	YY_BREAK
@@ -2224,7 +2224,7 @@ YY_RULE_SETUP
 case 58:
 YY_RULE_SETUP
 #line 251 "cool.flex"
-{ yylval.error_msg = yytext; return (ERROR); }
+{ strcpy(yylval.error_msg, yytext); return (ERROR); }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP

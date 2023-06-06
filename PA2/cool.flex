@@ -106,12 +106,12 @@ OBJECTID        [a-z]{IDSUFFIX}*
 
 <MULTILINE_COMMENT><<EOF>> {
    BEGIN INITIAL;
-   yylval.error_msg = "EOF in comment";
+   strcpy(yylval.error_msg, "EOF in comment");
    return (ERROR);
 }
 
 "*)" {
-   yylval.error_msg = "Unmatched *)";
+   strcpy(yylval.error_msg, "Unmatched *)");
    return (ERROR);
 }
 
@@ -166,7 +166,7 @@ OBJECTID        [a-z]{IDSUFFIX}*
 <STRING>\n {
    BEGIN INITIAL;
    curr_lineno += 1;
-   yylval.error_msg = "Unterminated string constant";
+   strcpy(yylval.error_msg, "Unterminated string constant");
    return (ERROR);
 }
 
@@ -178,12 +178,12 @@ OBJECTID        [a-z]{IDSUFFIX}*
    BEGIN INITIAL;
 
    if(readNullToken == 1) {
-      yylval.error_msg = "String contains null character";
+      strcpy(yylval.error_msg, "String contains null character");
       return (ERROR);
    }
 
    if(readString.length() >= MAX_STR_CONST) {
-      yylval.error_msg = "String constant too long";
+      strcpy(yylval.error_msg, "String constant too long");
       return (ERROR);
    }
 
@@ -193,7 +193,7 @@ OBJECTID        [a-z]{IDSUFFIX}*
 
 <STRING><<EOF>> {
    BEGIN INITIAL;
-   yylval.error_msg = "EOF in string constant";
+   strcpy(yylval.error_msg, "EOF in string constant");
    return (ERROR);
 }
 
@@ -248,6 +248,6 @@ OBJECTID        [a-z]{IDSUFFIX}*
 \n              { curr_lineno += 1; }
 {WHITESPACE}    {  }
 
-.               { yylval.error_msg = yytext; return (ERROR); }
+.               { strcpy(yylval.error_msg, yytext); return (ERROR); }
 
 %%
