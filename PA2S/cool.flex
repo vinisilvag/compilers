@@ -51,6 +51,7 @@ extern YYSTYPE cool_yylval;
 
 int commentLevel = 0;
 std::string readString = "";
+int readStringLength = 0;
 int readNullToken = 0;
 
 %}
@@ -127,13 +128,15 @@ OBJECTID        [a-z]{IDSUFFIX}*
 }
 
 <INITIAL>\" {
-   readString = "";
-   readNullToken = 0;
    BEGIN STRING;
+   readString = "";
+   readStringLength = 0;
+   readNullToken = 0;
 }
 
 <STRING>[^\n\0"\\]* {
    readString += yytext;
+   readStringLength += 1;
 }
 
 <STRING>\\(.|\n) {
@@ -163,15 +166,15 @@ OBJECTID        [a-z]{IDSUFFIX}*
    }
 }
 
+<STRING>\0 {
+   readNullToken = 1;
+}
+
 <STRING>\n {
    BEGIN INITIAL;
    curr_lineno += 1;
    yylval.error_msg = "Unterminated string constant";
    return (ERROR);
-}
-
-<STRING>\0 {
-   readNullToken = 1;
 }
 
 <STRING>\" {
@@ -182,7 +185,7 @@ OBJECTID        [a-z]{IDSUFFIX}*
       return (ERROR);
    }
 
-   if(readString.length() >= MAX_STR_CONST) {
+   if(readStringLength >= MAX_STR_CONST) {
       yylval.error_msg = "String constant too long";
       return (ERROR);
    }
