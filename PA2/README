@@ -113,6 +113,11 @@ Instructions
 Write-up for PA2
 ----------------
 
+Trabalho realizado por Vinicius Silva Gomes - 2021421869 para a disciplina
+DCC053 - Compiladores I, no semestre 2023/1.
+
+
+
 Para realizar a análise léxica de programas bem (ou mal) formados da
 linguagem de programação COOL (Classroom Object-Oriented Language),
 foi usado o Flex, que é um gerador de analisadores léxicos para linguagens
@@ -168,7 +173,7 @@ esses operadores foi t(?i:rue) e f(?i:alse).
 Além das palavras reservadas, outras definições regulares foram escritas.
 Dentre essas definições, estão presentes àquelas usadas para a representação de
 espaços em branco, caracteres alfanuméricos e a representação de
-identificadores de tipo e objetos.
+identificadores de tipo e objetos (variáveis, funções, etc).
 
 Por fim, três padrões para a ativação de regras de maneira condicional foram
 definidos. Eles são: MULTILINE_COMMENT, SINGLELINE_COMMENT e STRING. Como os
@@ -188,6 +193,14 @@ Começando pelos comentários
 Para as palavras reservadas, as regras são as mais simples possíveis: uma vez
 que a definição regular de alguma palavra foi encontrada no texto,  a palavra reservada
 correspondente em caixa alta será retornada como token reconhecido.
+
+Temos ainda a tokenização das constantes booleanas, de literais inteiros e 
+de identificadores, tanto de tipos quanto de objetos. Para todos os casos, a
+regra definida é mais ou menos a mesma: a subcadeia lida é inserida na devida
+tabela (de inteiros, id's ou valor booleano setado, caso seja um operador
+boolean true ou false) e o token da construção é retornado, sendo ele BOOL_CONST,
+INT_CONST, TYPEID ou OBJECTID, para valores booleanos, inteiros, identificadores
+de tipos e identificadores de objetos, respecitivamente.
 
 Caso um \n (quebra de linha) seja encontrado, a regra tomada é incrementar
 a variável curr_lineno.
