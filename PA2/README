@@ -113,3 +113,39 @@ Instructions
 Write-up for PA2
 ----------------
 
+Para realizar a análise léxica de programas bem (ou mal) formados da
+linguagem de programação COOL (Classroom Object-Oriented Language),
+foi usado o Flex, que é um gerador de analisadores léxicos para linguagens
+de programação. O Flex fornece uma API onde podemos especificar os
+tokens de linguagens de programação utilizando, dentre outras construções
+mais específicas da ferramenta, expressões e definições regulares.
+
+Dessa forma, a seção a seguir irá tratar sobre a abordagem utilizada para
+realizar a conversão de programas COOL para a sequência de tokens que define
+o mesmo programa, utilizando a estrutura e o ferramental fornecido pelo Flex.
+
+## Análisador Léxico para a linguagem COOL
+#### Váriaveis auxiliares
+
+Primeiramente, foram declaradas três variáveis auxiliares que ajudarão na
+leitura de comentários e strings da linguagem. As variáveis são:
+
+* commentLevel: de tipo inteiro, essa variável é responsável por indicar
+se existe um bloco de comentário aberto ou não;
+
+* readString: de tipo string, essa variável é responsável por armazenar
+o texto lido por uma string da linguagem COOL. O uso dela é interessante
+pois facilita a manipulação do caractere \ nas construções da linguagem
+(quebra de linha dentro da string, por exemplo);
+
+* readNullToken: de tipo inteiro, essa variável é responsável por indicar
+se a string que está sendo lida contém o caractere nulo (\0). Essa flag
+será usada posteriormente para testar se o analisador léxico deve acusar
+erro ou não, caso a o caractere nulo tenha sido lido ao longo da string.
+
+A medida que se fizerem necessárias, o comportamento e motivação de cada
+uma das variáveis será explicado e seu uso e necessidade ficará mais
+evidente.
+
+#### Definições Regulares
+
