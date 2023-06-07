@@ -194,9 +194,47 @@ tratamento de comentários e strings. Para ambas as construções, o uso de
 "start conditions" foi extremamente necessário para que todas as tratativas
 possam ser feitas.
 
-Começando pelos comentários, ...
+Começando pelos comentários, a ideia é que sempre que a subcadeia '(*' seja encontrada,
+um comentário é incializado, ó que é indicado pelo incremento da variável commentLevel
+e o início da regra MULTILINE_COMMENT, definida previamente. Nessa regra, todos os
+caracteres lidos são consumidos sem que nenhuma ação seja tomada, com exceção da subcadeia
+'*)', que indica que um fim de comentário foi encontrado e, portanto, commentLevel deve ser
+decrementada. Caso commentLevel chegue a zero, saímos da regra MULTILINE_COMMENT e voltamos
+para o "contexto" comum de execução.
 
-Para as strings, ...
+Além disso, caso EOF (fim de arquivo) seja encontrado, o erro "EOF in comment" é retornado
+e caso '*)' seja encontrado fora do contexto de comentário ou string, ou seja, no contexto
+normal de execução, o erro "Unmatched *)" é retornado.
+
+Por fim, caso a subcadeia '--' seja encontrada, a regra SINGLELINE_COMMENT é ativada. Nessa
+regra, todos os caracteres, com exceção do \n, são consumidos sem executar nenhuma ação. Caso
+um \n seja lido, a variável do próprio Flex curr_lineno, responsável por armazenar
+o número de linhas lidos até o momento, é incrementada.
+
+Para as strings, a estratégia é relativamente semelhante. Se estamos na regra inicial e
+encontramos o caractere '"' as variáveis auxiliares para a leitura de strings são resetadas
+e iniciamos uma regra STRING.
+
+Nessa regra, os caracteres vão sendo lidos do programa e acumulados na variável readString
+até que algum caractere começado com \ seja encontrado. A regra que trata esse tipo de
+ocorrência garante que quebras de linha propositalmente escritos sejam devidamente lidas, que
+quebras de linha do programa sejam sempre precedidas por \, as outras subcadeias da linguagem
+começadas com \ e o caractere nulo \0. Caso esse último seja encontrado, a flag readNullToken
+será marcada como 1, indicando que a string é inválida.
+
+Caso um \n que não seja precedido por um \ seja lido, o erro "Unterminated string constant"
+será imediatamente disparado.
+
+Caso o caractere '"' seja encontrado novamente, mas sob o contexto da regra STRING,
+significa que ela terminou de ser lida e mais erros podem ser encontrados/tratados. No caso,
+o contexto retorna para o contexto inicial e as condições de validade que devem ser
+avaliadas ao final da leitura da string serão testadas. Se a flag readNullToken for 1, o
+erro "String contains null character" é retornado e se a string lida tiver 1025 ou mais caracteres,
+o erro "String constant too long" é disparado. Por fim, se nenhum erro foi retornado,
+a string lida é adicionada à tabela de símbolos de strings.
+
+O último caso a ser avaliado é aquele onde o EOF é encontrado dentro do contexto de STRING.
+Nessa situação, o erro "EOF in string" será retornado.
 
 Uma vez estabelecido a forma de lidar com as construções mais complexas e problemáticas,
 do ponto de vista sintático, para a linguagem COOL, as outras regras para
@@ -204,11 +242,11 @@ tradução de tokens podem ser especificadas.
 
 A tokenização dos operadores, caracteres de pontuação, etc, da linguagem é
 bastante simples. Para as construções que são escritas com apenas um caractere,
-como +, -, *, (), {}, ., ;, etc; basta retornar o lexema lido como próprio token.
-Para as construções que usam dois (ou mais, caso existissem) caracteres, como
-<- e <=, por exemplo, o token retornado é um texto que identifique facilmente
-o lexema. No caso dos exemplos, os tokens retornados foram ASSIGN (referente a 
-atribuição de valores em COOL) e LE (referente ao operador de comparação menor
+como '+', '-', '*', '(', ')', '{', '}', '.', ';', etc; basta retornar o lexema
+lido como próprio token. Para as construções que usam dois (ou mais, caso existissem)
+caracteres, como '<-' e '<=', por exemplo, o token retornado é um texto que identifique
+facilmente o lexema. No caso dos exemplos, os tokens retornados foram ASSIGN (referente
+a  atribuição de valores em COOL) e LE (referente ao operador de comparação menor
 ou igual), respectivamente.
 
 Para as palavras reservadas, as regras são as mais simples possíveis: uma vez
@@ -236,9 +274,9 @@ mal construída para o buffer de mensagem de erro.
 ----------------
 
 Com todas essas construções descritas, é possível então realizar a análise
-léxima de programas COOL, tanto os bem construídos quanto os mal construídos.
+léxica de programas COOL, tanto os bem construídos quanto os mal construídos.
 Além disso, caso algum programa esteja mal construído do ponto de vista léxico,
-o analisador será capaz de identificar esse erro e retornar para o usuário qual
+o analisador será capaz de identificar os erros e retornar para o usuário qual
 o erro ou construção incorreta foi identificado e em qual linha ele foi
 identificado.
 
