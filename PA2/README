@@ -124,8 +124,9 @@ Dessa forma, a seção a seguir irá tratar sobre a abordagem utilizada para
 realizar a conversão de programas COOL para a sequência de tokens que define
 o mesmo programa, utilizando a estrutura e o ferramental fornecido pelo Flex.
 
-## Análisador Léxico para a linguagem COOL
-#### Váriaveis auxiliares
+Análisador Léxico para a linguagem COOL
+
+Váriaveis auxiliares
 
 Primeiramente, foram declaradas três variáveis auxiliares que ajudarão na
 leitura de comentários e strings da linguagem. As variáveis são:
@@ -147,5 +148,34 @@ A medida que se fizerem necessárias, o comportamento e motivação de cada
 uma das variáveis será explicado e seu uso e necessidade ficará mais
 evidente.
 
-#### Definições Regulares
+Definições Regulares
+
+Para facilitar o matching e a tokenização das estruturas da linguagem, 
+algumas definições regulares foram escritas, de modo que a definição das
+regras de pattern matching no Flex fosse facilitada.
+
+Apesar de não ser necessário, como as palavras reservadas de COOL são
+case-insensitive, todas elas foram escritas atráves de expressões
+regulares para facilitar a representação na seção de regras. As 
+palavras-chave class e while foram, por exemplo, representadas através das
+expressões regulares (?i:class) e (?i:while), respectivamente.
+
+As únicas exceções para as palavras reservadas da linguagem eram os operadores
+booleanos true e false, que devem começar com letra minúscula e, a partir
+daí, são case-insensitive. Dessa forma, a expressão regular para representar
+esses operadores foi t(?i:rue) e f(?i:alse).
+
+Além das palavras reservadas, outras definições regulares foram escritas.
+Dentre essas definições, estão presentes àquelas usadas para a representação de
+espaços em branco, caracteres alfanuméricos e a representação de
+identificadores de tipo e objetos.
+
+Por fim, três padrões para a ativação de regras de maneira condicional foram
+definidos. Eles são: MULTILINE_COMMENT, SINGLELINE_COMMENT e STRING. Como os
+nomes sugerem, eles serão responsáveis por auxiliar na leitura e 
+tratamento de comentários e strings no analisador léxico. Mais detalhes
+a forma como cada um foi usado serão providos na próxima seção.
+
+Regras
+
 
