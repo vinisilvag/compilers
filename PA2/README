@@ -129,6 +129,8 @@ Dessa forma, a seção a seguir irá tratar sobre a abordagem utilizada para
 realizar a conversão de programas COOL para a sequência de tokens que define
 o mesmo programa, utilizando a estrutura e o ferramental fornecido pelo Flex.
 
+
+
 Análisador Léxico para a linguagem COOL
 
 Váriaveis auxiliares
@@ -152,6 +154,8 @@ erro ou não, caso a o caractere nulo tenha sido lido ao longo da string.
 A medida que se fizerem necessárias, o comportamento e motivação de cada
 uma das variáveis será explicado e seu uso e necessidade ficará mais
 evidente.
+
+
 
 Definições Regulares
 
@@ -181,6 +185,8 @@ nomes sugerem, eles serão responsáveis por auxiliar na leitura e
 tratamento de comentários e strings no analisador léxico. Mais detalhes
 a forma como cada um foi usado serão providos na próxima seção.
 
+
+
 Regras
 
 As primeiras regras especificadas são àquelas relativas a leitura e
@@ -188,7 +194,22 @@ tratamento de comentários e strings. Para ambas as construções, o uso de
 "start conditions" foi extremamente necessário para que todas as tratativas
 possam ser feitas.
 
-Começando pelos comentários
+Começando pelos comentários, ...
+
+Para as strings, ...
+
+Uma vez estabelecido a forma de lidar com as construções mais complexas e problemáticas,
+do ponto de vista sintático, para a linguagem COOL, as outras regras para
+tradução de tokens podem ser especificadas.
+
+A tokenização dos operadores, caracteres de pontuação, etc, da linguagem é
+bastante simples. Para as construções que são escritas com apenas um caractere,
+como +, -, *, (), {}, ., ;, etc; basta retornar o lexema lido como próprio token.
+Para as construções que usam dois (ou mais, caso existissem) caracteres, como
+<- e <=, por exemplo, o token retornado é um texto que identifique facilmente
+o lexema. No caso dos exemplos, os tokens retornados foram ASSIGN (referente a 
+atribuição de valores em COOL) e LE (referente ao operador de comparação menor
+ou igual), respectivamente.
 
 Para as palavras reservadas, as regras são as mais simples possíveis: uma vez
 que a definição regular de alguma palavra foi encontrada no texto,  a palavra reservada
@@ -212,7 +233,7 @@ Por fim, caso a subcadeia lida não se aplique a nenhuma das regras definidas,
 ela irá cair numa última regra de erro, que retorna ERROR e copia a subcadeia
 mal construída para o buffer de mensagem de erro.
 
-
+----------------
 
 Com todas essas construções descritas, é possível então realizar a análise
 léxima de programas COOL, tanto os bem construídos quanto os mal construídos.
