@@ -176,8 +176,8 @@ esses operadores foi t(?i:rue) e f(?i:alse).
 
 Além das palavras reservadas, outras definições regulares foram escritas.
 Dentre essas definições, estão presentes àquelas usadas para a representação de
-espaços em branco, caracteres alfanuméricos e a representação de
-identificadores de tipo e objetos (variáveis, funções, etc).
+espaços em branco, literais, identificadores de tipo e objetos (variáveis,
+funções, etc), entre outras.
 
 Por fim, três padrões para a ativação de regras de maneira condicional foram
 definidos. Eles são: MULTILINE_COMMENT, SINGLELINE_COMMENT e STRING. Como os
