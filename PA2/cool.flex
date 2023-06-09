@@ -300,6 +300,6 @@ OBJECTID        [a-z]{IDSUFFIX}*
   *  Caso nenhuma regra seja aplicavel, cai na regra de ERRO
   */
 
-.               { strcpy(yylval.error_msg, yytext); return (ERROR); }
+.               { yylval.error_msg = yytext; return (ERROR); }
 
 %%
