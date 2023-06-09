@@ -1,12 +1,13 @@
 /*
  *  The scanner definition for COOL.
  */
-
+ 
 /*
  *  Stuff enclosed in %{ %} in the first section is copied verbatim to the
  *  output, so headers and global definitions are placed here to be visible
  * to the code in the file.  Don't remove anything that was here initially
  */
+
 %{
 #include <cool-parse.h>
 #include <stringtab.h>
@@ -49,11 +50,19 @@ extern YYSTYPE cool_yylval;
  *  Add Your own definitions here
  */
 
+/*
+ *  Variaveis auxiliares
+ */
+
 int commentLevel = 0;
 std::string readString = "";
 int readNullToken = 0;
 
 %}
+
+/*
+ *  Definicoes regulares
+ */
 
 CLASS           (?i:class)
 IF              (?i:if)
@@ -75,14 +84,24 @@ NOT             (?i:not)
 TRUE            t(?i:rue)
 FALSE           f(?i:alse)
 
-DELIM           [ \t\r\f\v]
-WHITESPACE      {DELIM}+
+DARROW          =>
+LE              <=
+ASSIGN          <-
+
+WHITESPACE      (" "|"\t"|"\r"|"\f"|"\v")
 DIGIT           [0-9]
-LETTER          [a-zA-Z]
-ALPHANUM        [0-9a-zA-Z]
+
+OPERATORS       ("+"|"-"|"*"|"/")
+SYMBOLS         ("("|")"|"{"|"}"|":"|";"|"."|","|"@"|"~"|"<"|"=")
+INVALIDS        ("!"|"#"|"$"|"%"|"^"|"&"|"_"|">"|"?"|"`"|"["|"]"|"|"|"\\")
+
 IDSUFFIX        [0-9a-zA-Z_]
 TYPEID          [A-Z]{IDSUFFIX}*
 OBJECTID        [a-z]{IDSUFFIX}*
+
+/*
+ *  Regras ativadas de maneira condicional
+ */
 
 %START MULTILINE_COMMENT
 %START SINGLELINE_COMMENT
@@ -90,152 +109,167 @@ OBJECTID        [a-z]{IDSUFFIX}*
 
 %%
 
+ /*
+  *  Comentarios da forma (* ... *)
+  */
+
 <INITIAL,MULTILINE_COMMENT,SINGLELINE_COMMENT>"(*" {
-   commentLevel += 1;
-   BEGIN MULTILINE_COMMENT;
+  commentLevel += 1;
+  BEGIN MULTILINE_COMMENT;
 }
 
-<MULTILINE_COMMENT>[^\n(*]* {}
+<MULTILINE_COMMENT>[^\n(*]* { }
 
-<MULTILINE_COMMENT>[()*] {}
+<MULTILINE_COMMENT>[()*] { }
 
 <MULTILINE_COMMENT>"*)" {
-   commentLevel -= 1;
-   if(commentLevel == 0) BEGIN INITIAL;
+  commentLevel -= 1;
+  if (commentLevel == 0) BEGIN INITIAL;
 }
 
 <MULTILINE_COMMENT><<EOF>> {
-   BEGIN INITIAL;
-   strcpy(yylval.error_msg, "EOF in comment");
-   return (ERROR);
+  BEGIN INITIAL;
+
+  yylval.error_msg = "EOF in comment";
+  return (ERROR);
 }
 
 "*)" {
-   strcpy(yylval.error_msg, "Unmatched *)");
-   return (ERROR);
+  yylval.error_msg = "Unmatched *)";
+  return (ERROR);
 }
+
+ /*
+  *  Comentarios inline (iniciados por "--")
+  */
 
 <INITIAL>"--" {
-   BEGIN SINGLELINE_COMMENT;
+  BEGIN SINGLELINE_COMMENT;
 }
 
-<SINGLELINE_COMMENT>[^\n]* {}
+<SINGLELINE_COMMENT>[^\n]* { }
 
 <SINGLELINE_COMMENT>\n {
-   curr_lineno += 1;
-   BEGIN INITIAL;
+    curr_lineno += 1;
+    BEGIN INITIAL;
 }
 
+ /*
+  *  Strings
+  */
+
 <INITIAL>\" {
-   readString = "";
-   readNullToken = 0;
-   BEGIN STRING;
+  readString = "";
+  readNullToken = 0;
+
+  BEGIN STRING;
 }
 
 <STRING>[^\n\0"\\]* {
-   readString += yytext;
+  readString += yytext;
 }
 
 <STRING>\\(.|\n) {
-   switch(yytext[1]) {
-      case '\n':
-         curr_lineno += 1;
-         readString += '\n';
-         break; 
-      case 'n':
-         readString += '\n';
-         break; 
-      case 't':
-         readString += '\t';
-         break; 
-      case 'f':
-         readString += '\f';
-         break; 
-      case 'b':
-         readString += '\b';
-         break; 
-      case '\0': 
-         readNullToken = 1;
-         break;
-      default:
-         readString += yytext[1];
-         break;
-   }
+  switch(yytext[1]) {
+    case '\n':
+      curr_lineno += 1;
+      readString += '\n';
+      break; 
+    case 'n':
+      readString += '\n';
+      break; 
+    case 't':
+      readString += '\t';
+      break; 
+    case 'f':
+      readString += '\f';
+      break; 
+    case 'b':
+      readString += '\b';
+      break; 
+    case '\0': 
+      readNullToken = 1;
+      break;
+    default:
+      readString += yytext[1];
+      break;
+  }
 }
 
 <STRING>\n {
-   BEGIN INITIAL;
-   curr_lineno += 1;
-   strcpy(yylval.error_msg, "Unterminated string constant");
-   return (ERROR);
+  BEGIN INITIAL;
+
+  curr_lineno += 1;
+
+  yylval.error_msg = "Unterminated string constant";
+  return (ERROR);
 }
 
 <STRING>\0 {
-   readNullToken = 1;
+  readNullToken = 1;
 }
 
 <STRING>\" {
-   BEGIN INITIAL;
+  BEGIN INITIAL;
 
-   if(readNullToken == 1) {
-      strcpy(yylval.error_msg, "String contains null character");
-      return (ERROR);
-   }
+  if(readNullToken == 1) {
+    yylval.error_msg = "String contains null character";
+    return (ERROR);
+  }
 
-   if(readString.length() >= MAX_STR_CONST) {
-      strcpy(yylval.error_msg, "String constant too long");
-      return (ERROR);
-   }
+  if(readString.length() >= MAX_STR_CONST) {
+    yylval.error_msg = "String constant too long";
+    return (ERROR);
+  }
 
-   yylval.symbol = stringtable.add_string((char *) readString.c_str());
-   return (STR_CONST);
+  yylval.symbol = stringtable.add_string((char *) readString.c_str());
+  return (STR_CONST);
 }
 
 <STRING><<EOF>> {
-   BEGIN INITIAL;
-   strcpy(yylval.error_msg, "EOF in string constant");
-   return (ERROR);
+  BEGIN INITIAL;
+
+  yylval.error_msg = "EOF in string constant";
+  return (ERROR);
 }
 
-"@"             { return ('@'); }
-"~"             { return ('~'); }
-"+"             { return ('+'); }
-"-"             { return ('-'); }
-"*"             { return ('*'); }
-"/"             { return ('/'); }
+ /*
+  *  Palavras-chave
+  */
 
-"="             { return ('='); }
-"<-"            { return (ASSIGN); }
-"<"             { return ('<'); }
-"<="            { return (LE); }
-"=>"            { return (DARROW); }
-
-"("             { return ('('); }
-")"             { return (')'); }
-"{"             { return ('{'); }
-"}"             { return ('}'); }
-"."             { return ('.'); }
-","             { return (','); }
-":"             { return (':'); }
-";"             { return (';'); }
-
-{CLASS}		    { return (CLASS); }
-{IF}		       { return (IF); }
-{THEN}		    { return (THEN); }
-{ELSE}		    { return (ELSE); }
-{FI}		       { return (FI); }
-{IN}		       { return (IN); }
-{INHERITS}		 { return (INHERITS); }
+{CLASS}		      { return (CLASS); }
+{IF}		        { return (IF); }
+{THEN}		      { return (THEN); }
+{ELSE}		      { return (ELSE); }
+{FI}		        { return (FI); }
+{IN}		        { return (IN); }
+{INHERITS}		  { return (INHERITS); }
 {ISVOID}		    { return (ISVOID); }
-{LET}		       { return (LET); }
-{LOOP}		    { return (LOOP); }
-{POOL}		    { return (POOL); }
-{WHILE}		    { return (WHILE); }
-{CASE}		    { return (CASE); }
-{ESAC}		    { return (ESAC); }
-{NEW}		       { return (NEW); }
-{OF}		       { return (OF); }
-{NOT}		       { return (NOT); }
+{LET}		        { return (LET); }
+{LOOP}		      { return (LOOP); }
+{POOL}		      { return (POOL); }
+{WHILE}		      { return (WHILE); }
+{CASE}		      { return (CASE); }
+{ESAC}		      { return (ESAC); }
+{NEW}		        { return (NEW); }
+{OF}		        { return (OF); }
+{NOT}		        { return (NOT); }
+
+ /*
+  * Simbolos que possuem mais de dois caracteres
+  */
+
+"=>"            { return (DARROW); }
+"<-"            { return (ASSIGN); }
+"<="            { return (LE); }
+
+ /*
+  *  Simbolos, operadores, booleanos, literais e identificadores de tipo e objetos (variaveis, funcoes, etc)
+  */
+
+{SYMBOLS}       { return yytext[0]; }
+
+{OPERATORS}     { return yytext[0]; }
 
 {TRUE}          { yylval.boolean = 1; return (BOOL_CONST); }
 {FALSE}         { yylval.boolean = 0; return (BOOL_CONST); }
@@ -245,8 +279,23 @@ OBJECTID        [a-z]{IDSUFFIX}*
 {TYPEID}        { yylval.symbol = idtable.add_string(yytext); return (TYPEID); }
 {OBJECTID}      { yylval.symbol = idtable.add_string(yytext); return (OBJECTID); }
 
+
+ /*
+  *  Quebra de linha e espacos em branco (e suas variacoes)
+  */
+
 \n              { curr_lineno += 1; }
-{WHITESPACE}    {  }
+{WHITESPACE}+   {  }
+
+ /*
+  *  Caracteres invalidos da linguagem
+  */
+
+{INVALIDS}      { yylval.error_msg = yytext; return (ERROR); }
+
+ /*
+  *  Caso nenhuma regra seja aplicavel, cai na regra de ERRO
+  */
 
 .               { strcpy(yylval.error_msg, yytext); return (ERROR); }
 
