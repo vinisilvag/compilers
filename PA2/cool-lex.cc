@@ -1891,7 +1891,7 @@ YY_RULE_SETUP
 case 46:
 YY_RULE_SETUP
 #line 304 "cool.flex"
-{ strcpy(yylval.error_msg, yytext); return (ERROR); }
+{ yylval.error_msg = yytext; return (ERROR); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
