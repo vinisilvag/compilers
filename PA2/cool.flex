@@ -1,7 +1,7 @@
 /*
  *  The scanner definition for COOL.
  */
- 
+
 /*
  *  Stuff enclosed in %{ %} in the first section is copied verbatim to the
  *  output, so headers and global definitions are placed here to be visible
@@ -92,7 +92,8 @@ WHITESPACE      (" "|"\t"|"\r"|"\f"|"\v")
 DIGIT           [0-9]
 
 OPERATORS       ("+"|"-"|"*"|"/")
-SYMBOLS         ("("|")"|"{"|"}"|":"|";"|"."|","|"@"|"~"|"<"|"=")
+PUNCTUATION     (":"|";"|"."|",")
+SYMBOLS         ("("|")"|"{"|"}"|"@"|"~"|"<"|"=")
 INVALIDS        ("!"|"#"|"$"|"%"|"^"|"&"|"_"|">"|"?"|"`"|"["|"]"|"|"|"\\")
 
 IDSUFFIX        [0-9a-zA-Z_]
@@ -268,6 +269,8 @@ OBJECTID        [a-z]{IDSUFFIX}*
   */
 
 {SYMBOLS}       { return yytext[0]; }
+
+{PUNCTUATION}   { return yytext[0]; }
 
 {OPERATORS}     { return yytext[0]; }
 
