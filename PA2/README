@@ -179,6 +179,12 @@ Dentre essas definições, estão presentes àquelas usadas para a representaç�
 espaços em branco, literais, identificadores de tipo e objetos (variáveis,
 funções, etc), entre outras.
 
+Aqui também foram escritas definições regulares para o reconhecimento dos operadores
+usados na linguagem ("+", "-", entre outros), para as pontuações que aparecem em
+programas COOL, outros símbolos genéricos que também podem aparecer e, por fim, uma
+definição regular para símbolos que são inválidos fora de seu contexto correto ou
+que não devem aparecer em nenhum outro programa COOL, como "\", "_", "!". 
+
 Por fim, três padrões para a ativação de regras de maneira condicional foram
 definidos. Eles são: MULTILINE_COMMENT, SINGLELINE_COMMENT e STRING. Como os
 nomes sugerem, eles serão responsáveis por auxiliar na leitura e 
@@ -198,18 +204,19 @@ Começando pelos comentários, a ideia é que sempre que a subcadeia '(*' seja e
 um comentário é incializado, ó que é indicado pelo incremento da variável commentLevel
 e o início da regra MULTILINE_COMMENT, definida previamente. Nessa regra, todos os
 caracteres lidos são consumidos sem que nenhuma ação seja tomada, com exceção da subcadeia
-'*)', que indica que um fim de comentário foi encontrado e, portanto, commentLevel deve ser
-decrementada. Caso commentLevel chegue a zero, saímos da regra MULTILINE_COMMENT e voltamos
-para o "contexto" comum de execução.
+"*)", que indica que um fim de comentário foi encontrado e, portanto, commentLevel deve ser
+decrementado. Caso commentLevel chegue a zero, saímos da regra MULTILINE_COMMENT e voltamos
+para o "contexto" INITIAL de execução.
 
 Além disso, caso EOF (fim de arquivo) seja encontrado, o erro "EOF in comment" é retornado
-e caso '*)' seja encontrado fora do contexto de comentário ou string, ou seja, no contexto
+e caso "*)" seja encontrado fora do contexto de comentário ou string, ou seja, no contexto
 normal de execução, o erro "Unmatched *)" é retornado.
 
 Por fim, caso a subcadeia '--' seja encontrada, a regra SINGLELINE_COMMENT é ativada. Nessa
 regra, todos os caracteres, com exceção do \n, são consumidos sem executar nenhuma ação. Caso
 um \n seja lido, a variável do próprio Flex curr_lineno, responsável por armazenar
-o número de linhas lidos até o momento, é incrementada.
+o número de linhas lidos até o momento, é incrementada e voltamos para o contexto INITIAL
+de regras do Flex.
 
 Para as strings, a estratégia é relativamente semelhante. Se estamos na regra inicial e
 encontramos o caractere '"' as variáveis auxiliares para a leitura de strings são resetadas
@@ -217,10 +224,10 @@ e iniciamos uma regra STRING.
 
 Nessa regra, os caracteres vão sendo lidos do programa e acumulados na variável readString
 até que algum caractere começado com \ seja encontrado. A regra que trata esse tipo de
-ocorrência garante que quebras de linha propositalmente escritos sejam devidamente lidas, que
-quebras de linha do programa sejam sempre precedidas por \, as outras subcadeias da linguagem
-começadas com \ e o caractere nulo \0. Caso esse último seja encontrado, a flag readNullToken
-será marcada como 1, indicando que a string é inválida.
+ocorrência garante que quebras de linha propositalmente escritas sejam devidamente lidas, que
+quebras de linha do programa sejam sempre precedidas por \, e qual o comportamento para as
+outras subcadeias da linguagem começadas com \ e o símbolo nulo, por exemplo. Caso esse
+último seja encontrado, a flag readNullToken será marcada como 1, indicando que a string é inválida.
 
 Caso um \n que não seja precedido por um \ seja lido, o erro "Unterminated string constant"
 será imediatamente disparado.
@@ -231,7 +238,8 @@ o contexto retorna para o contexto inicial e as condições de validade que deve
 avaliadas ao final da leitura da string serão testadas. Se a flag readNullToken for 1, o
 erro "String contains null character" é retornado e se a string lida tiver 1025 ou mais caracteres,
 o erro "String constant too long" é disparado. Por fim, se nenhum erro foi retornado,
-a string lida é adicionada à tabela de símbolos de strings.
+a string lida é adicionada à tabela de símbolos de strings e o token STR_CONST será
+retornado.
 
 O último caso a ser avaliado é aquele onde o EOF é encontrado dentro do contexto de STRING.
 Nessa situação, o erro "EOF in string" será retornado.
@@ -246,7 +254,7 @@ como '+', '-', '*', '(', ')', '{', '}', '.', ';', etc; basta retornar o lexema
 lido como próprio token. Para as construções que usam dois (ou mais, caso existissem)
 caracteres, como '<-' e '<=', por exemplo, o token retornado é um texto que identifique
 facilmente o lexema. No caso dos exemplos, os tokens retornados foram ASSIGN (referente
-a  atribuição de valores em COOL) e LE (referente ao operador de comparação menor
+a atribuição de valores em COOL) e LE (referente ao operador de comparação menor
 ou igual), respectivamente.
 
 Para as palavras reservadas, as regras são as mais simples possíveis: uma vez
@@ -256,7 +264,7 @@ correspondente em caixa alta será retornada como token reconhecido.
 Temos ainda a tokenização das constantes booleanas, de literais inteiros e 
 de identificadores, tanto de tipos quanto de objetos. Para todos os casos, a
 regra definida é mais ou menos a mesma: a subcadeia lida é inserida na devida
-tabela (de inteiros, id's ou valor booleano setado, caso seja um operador
+tabela (de inteiros, id's ou tem o valor booleano setado, caso seja um operador
 boolean true ou false) e o token da construção é retornado, sendo ele BOOL_CONST,
 INT_CONST, TYPEID ou OBJECTID, para valores booleanos, inteiros, identificadores
 de tipos e identificadores de objetos, respecitivamente.
@@ -267,7 +275,8 @@ a variável curr_lineno.
 Caso algum espaço em branco, codificado pela definição regular WHITESPACE,
 seja encontrado, ele apenas é consumido, sem que nada a mais seja feito.
 
-Por fim, caso a subcadeia lida não se aplique a nenhuma das regras definidas,
+Por fim, caso a subcadeia lida pertença ao conjunto de símbolos inválidos da
+linguagem ou não seja possível aplicar nenhuma das regras previamente definidas,
 ela irá cair numa última regra de erro, que retorna ERROR e copia a subcadeia
 mal construída para o buffer de mensagem de erro.
 
@@ -286,8 +295,13 @@ diversos, complexos e completos programas COOL da maneira esperada, tokenizando
 corretamente quando a construção é adequada, ou apresentando o devido erro,
 quando ela não está bem formulada.
 
-Assim como pedido, além dos testes construídos durante o desenvolvimento do
-analisador, o programa test.cl foi completamente reescrito, se tornando um
-novo e grande programa COOL que não apresenta erros e é capaz de ser analisado
-corretamente pelo lexer construído, ser compilado pelo compilador de COOL e
-executado pelo simulador do MIPS.
+Assim como pedido, além dos testes construídos para testar as mais variadas situações
+durante o desenvolvimento do analisador, o programa test.cl foi mudado para programa
+COOL mais completo que não apresenta erros e é capaz de ser analisado corretamente pelo lexer
+construído, ser compilado pelo compilador de COOL e executado pelo simulador do MIPS.
+
+O programa em questão é um exemplo fornecido de como seria uma simulação do
+Jogo da Vida de Conway para alguns exemplos de estados iniciais e quais seriam as
+futuras gerações para aquele estado. Acredito que entre todos os exemplos fornecidos
+e os testes criados durante o período de desenvolvimento do analisador, esse programa
+é o maior, mais complexo e mais completo programa disponível.
