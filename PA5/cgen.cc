@@ -960,5 +960,3 @@ void no_expr_class::code(ostream &s) {
 
 void object_class::code(ostream &s) {
 }
-
-
