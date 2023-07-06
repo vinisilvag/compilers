@@ -132,3 +132,18 @@ Instructions
 
 Write-up for PA3
 ----------------
+
+Trabalho realizado por Vinicius Silva Gomes - 2021421869 para a disciplina
+DCC053 - Compiladores I, no semestre 2023/1.
+
+
+Para realizar a análise léxica de programas bem (ou mal) formados da
+linguagem de programação COOL (Classroom Object-Oriented Language),
+foi usado o Flex, que é um gerador de analisadores léxicos para linguagens
+de programação. O Flex fornece uma API onde podemos especificar os
+tokens de linguagens de programação utilizando, dentre outras construções
+mais específicas da ferramenta, expressões e definições regulares.
+
+Dessa forma, a seção a seguir irá tratar sobre a abordagem utilizada para
+realizar a conversão de programas COOL para a sequência de tokens que define
+o mesmo programa, utilizando a estrutura e o ferramental fornecido pelo Flex.
