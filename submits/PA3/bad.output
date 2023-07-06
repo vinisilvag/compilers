@@ -1,0 +1,14 @@
+"bad.cl", line 5: syntax error at or near OBJECTID = b
+"bad.cl", line 9: syntax error at or near OBJECTID = a
+"bad.cl", line 22: syntax error at or near OBJECTID = a
+"bad.cl", line 30: syntax error at or near OBJECTID = inherts
+"bad.cl", line 34: syntax error at or near ';'
+"bad.cl", line 48: syntax error at or near ';'
+"bad.cl", line 48: syntax error at or near ')'
+"bad.cl", line 53: syntax error at or near LOOP
+"bad.cl", line 54: syntax error at or near POOL
+"bad.cl", line 61: syntax error at or near '}'
+"bad.cl", line 63: syntax error at or near '}'
+"bad.cl", line 68: syntax error at or near '}'
+"bad.cl", line 69: syntax error at or near ';'
+Compilation halted due to lex and parse errors
