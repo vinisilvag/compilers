@@ -133,17 +133,59 @@ Instructions
 Write-up for PA3
 ----------------
 
-Trabalho realizado por Vinicius Silva Gomes - 2021421869 para a disciplina
-DCC053 - Compiladores I, no semestre 2023/1.
+Trabalho realizado por Vinicius Silva Gomes - 2021421869 para a
+disciplina DCC053 - Compiladores I, no semestre 2023/1.
 
 
-Para realizar a análise léxica de programas bem (ou mal) formados da
+Para realizar a análise sintática de programas bem (ou mal) formados da
 linguagem de programação COOL (Classroom Object-Oriented Language),
-foi usado o Flex, que é um gerador de analisadores léxicos para linguagens
-de programação. O Flex fornece uma API onde podemos especificar os
-tokens de linguagens de programação utilizando, dentre outras construções
-mais específicas da ferramenta, expressões e definições regulares.
+foi usado o Bison, que é um gerador de analisadores sintáticos para
+linguagens de programação. O Bison fornece uma API que converte
+anotações de gramáticas livres de contexto para reconhecedores LALR(1).
 
-Dessa forma, a seção a seguir irá tratar sobre a abordagem utilizada para
-realizar a conversão de programas COOL para a sequência de tokens que define
-o mesmo programa, utilizando a estrutura e o ferramental fornecido pelo Flex.
+Dessa forma, as seções a seguir serão responsáveis por descrever como
+a árvore sintática dos programas bem formados em COOL é feita através
+do Bison, juntamente de como os erros apresentados na sintaxe podem
+ser tratados.
+
+
+Análisador Sintático para a linguagem COOL
+
+
+----------------
+
+Com todas essas construções descritas, é possível, então, realizar a
+análise sintática de programas COOL, tanto os bem construídos quanto
+os mal construídos (retornam erros). Além disso, caso algum programa
+esteja mal construído do ponto de vista sintático, o analisador será
+capaz de identificar esses erros e retornar para o usuário qual o
+erro ou construção incorreta foi identificado e em qual linha ele foi
+identificado.
+
+Além disso, para exercitar o analisador sintático construído, alguns
+testes foram desenvolvidos para verificar que ele é capaz de gerar
+as ASTs para os mais diversos, complexos e completos programas COOL da
+maneira esperada, construindo corretamente a árvore quando a construção
+é adequada, ou apresentando o devido erro, quando o programa não está
+bem formulado.
+
+Assim como pedido, além dos testes construídos para testar as mais
+variadas situações durante o desenvolvimento do analisador, os programas
+good.cl e bad.cl foram modificados para programas COOL com propósitos
+de verificar casos onde o analisador sintático deve funcionar
+corretamente e gerar a AST para o programa e casos onde o parser deve
+ser capaz de perceber e retornar erros sintáticos que estão presentes 
+no programa, respectivamente.
+
+O programa good.cl, assim como para o PA2, é um exemplo fornecido de
+como seria uma simulação do Jogo da Vida de Conway para alguns exemplos
+de estados iniciais e quais seriam as futuras gerações para aquele estado.
+Acredito que entre todos os exemplos fornecidos e os testes criados
+durante o período de desenvolvimento do analisador, esse programa
+é o maior, mais complexo e mais completo programa disponível.
+
+Já o programa bad.cl não apresenta muita coisa em especial, se trata
+apenas de um compilado de códigos com erros sintáticos, os quais tanto
+o parser desenvolvido para esse PA quanto o parser oficial de COOL,
+presente no compilador "coolc", são capazes de perceber os erros e
+indicá-los ao programador.
