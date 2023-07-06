@@ -1,29 +1,70 @@
 
-(*
- *  execute "coolc bad.cl" to see the error messages that the coolc parser
- *  generates
- *
- *  execute "myparser bad.cl" to see the error messages that your parser
- *  generates
- *)
-
-(* no error *)
 class A {
 };
 
-(* error:  b is not a type identifier *)
 Class b inherits A {
 };
 
-(* error:  a is not a type identifier *)
-Class C inherits a {
+class Buzz {
+    f(x : Object) : a {
+        5 + 3
+    };
 };
 
-(* error:  keyword inherits is misspelled *)
+class Foo {
+    bar():Int{let a:Int in a + let b:String in b};
+};
+
+class Bar {
+   foo:Int <- 10;
+   bar:Int;
+   foo(a:Int, b:Int, c:String): Int  {
+      new a
+   };
+   bar() :Int {
+      20
+   };
+};
+
+
 Class D inherts A {
 };
 
-(* error:  closing brace is missing *)
 Class E inherits A {
 ;
 
+class Baz {
+  f() : Object { {
+    3;
+    A;
+    B;
+    -;
+    +;
+  } };
+};
+
+class Test {
+    foo:Test;
+    bar(x:Int;y:Int):Int {if true then 2 fi};
+};
+
+class Fizz {
+    f():Int{{
+        while 1 loop 1 loop;
+        while 1 pool 1 pool;
+    }};
+};
+
+class Test2 {
+  foo:Test;
+  bar():Int {5};
+  biz():Object{};
+  bum():Test {{x;y;z;}};
+  boo():String {};
+  test(x:Int):String {"testttttt"};
+};
+
+class Test3 {
+	f():Int{ {} };
+    f():Int{ {;} };
+};

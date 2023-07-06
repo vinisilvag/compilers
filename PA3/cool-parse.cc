@@ -1515,7 +1515,7 @@ yyreduce:
 
   case 19: /* case_list: case_list case  */
 #line 168 "cool.y"
-                 { (yyval.cases) = append_Cases((yyvsp[-1].cases), single_Cases((yyvsp[0].case_))); }
+                   { (yyval.cases) = append_Cases((yyvsp[-1].cases), single_Cases((yyvsp[0].case_))); }
 #line 1520 "cool.tab.c"
     break;
 
