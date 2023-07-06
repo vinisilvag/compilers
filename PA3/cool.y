@@ -127,7 +127,7 @@ class_list
     
 class
   : CLASS TYPEID '{' feature_list '}' ';'
-    /* se o pai nao for especificado a classe herdad e Object */
+    /* se o pai nao for especificado a classe herda e Object */
     { $$ = class_($2, idtable.add_string("Object"), $4, stringtable.add_string(curr_filename)); }
   | CLASS TYPEID INHERITS TYPEID '{' feature_list '}' ';'
     { $$ = class_($2, $4, $6, stringtable.add_string(curr_filename)); };
@@ -165,7 +165,7 @@ formal
 
 case_list
   : {  $$ = nil_Cases(); } /* lista de case vazia */
-| case_list case { $$ = append_Cases($1, single_Cases($2)); };
+  | case_list case { $$ = append_Cases($1, single_Cases($2)); };
 
 case
   : OBJECTID ':' TYPEID DARROW expression ';'
