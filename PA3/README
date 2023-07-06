@@ -151,6 +151,61 @@ ser tratados.
 
 Análisador Sintático para a linguagem COOL
 
+A estratégia para produzir o analisador sintático foi bastante
+simples, seguindo sempre as recomendações da maneira como o Bison
+pede para que o arquivo seja formatado e escrito.
+
+Sendo assim, o primeiro passo foi completar a lista dos não-terminais,
+onde atribuíamos um tipo para o valor semântico de cada não-terminal. Ao
+final, os tipos preenchidos foram: program, class, class list, feature,
+feature list, formal, formal list, case, case list, expression,
+expression list e, por fim, dispatch list.
+
+Os tokens sem o sufixo "list" no final representam tokens que lidam
+com apenas um tipo de construção específico:
+
+* class: uma única classe da linaguagem;
+* formal: um único parâmetro formal na chamada de método;
+* case: um único "case" dentro do switch case branch;
+* expression: uma única expressão da linguagem (é o mais abrangente
+de todos).
+
+As construções com o sufixo list são uma variação dessas acima,
+com a adição de lidar com listas de classes, parâmetros formais,
+expressões, etc.
+
+
+Em seguida forma feitas as as definições de precedência da gramática.
+As declarações foram que:
+
+* "Less or Equal" (LE) e o operador de igualdade não possuem
+associatividade a direita ou a esquerda;
+* "NOT", "+", "-", "*", "/", "~", "ISVOID" possuem associatividade
+a esquerda.
+
+
+Por fim, definimos o comportamento para todos os tokens definidos,
+informado o que é esperado e utilizando de variáveis e funções
+auxiliares fornecidas pelo Bison para compor as expressões da forma
+desejada. Após definir a sintaxe correta para cada tipo, podemos
+também definir o token de erro e a condição em que ele aparece,
+para que caso alguma expressão não esteja correta do ponto de vista
+sintático, o mecanismo de error handling do Bison seja chamado e
+o erro possa ser apontado ao programador.
+
+As definições são relativamente simples, no sentido de que precisamos
+apenas observar como as construções em COOL podem ser feitas e
+mapear essa estrutura para a sintaxe do Bison, tomando os devidos
+cuidados (por exemplo, podemos ter uma lista de features, ou seja,
+métodos e atributos vazia, mas não podemos tem uma feature vazia
+em uma lista).
+
+Definida essa estrutura, o passo seguinte é testar exaustivamente
+o analisador sintático e resolver os conflitos de shift/reduce e
+reduce/reduce, principalmente, para remover a ambiguidade do parser
+e gerar, com isso, resultados corretos. A maioria desses conflitos,
+quando a construção estava correta, era resolvido mudando as
+prioridades dentro da estrutura do Bison.
 
 ----------------
 
