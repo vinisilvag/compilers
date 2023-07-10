@@ -20,6 +20,8 @@ void dump_Symbol(ostream& stream, int padding, Symbol b);
 void assert_Symbol(Symbol b);
 Symbol copy_Symbol(Symbol b);
 
+typedef char* Register;
+
 class Program_class;
 typedef Program_class *Program;
 class Class__class;
@@ -85,11 +87,11 @@ void dump_with_types(ostream&,int);
 
 
 #define Case_EXTRAS                             \
-virtual void dump_with_types(ostream&,int) = 0;
+virtual void dump_with_types(ostream& ,int) = 0;
 
 
 #define branch_EXTRAS                                   \
-void dump_with_types(ostream&,int);
+void dump_with_types(ostream& ,int);
 
 
 #define Expression_EXTRAS                    \

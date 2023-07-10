@@ -3,9 +3,6 @@
 #include "emit.h"
 #include "cool-tree.h"
 #include "symtab.h"
-#include <string>
-#include <vector>
-#include <map>
 
 enum Basicness     {Basic, NotBasic};
 #define TRUE 1
@@ -46,10 +43,6 @@ private:
    void build_inheritance_tree();
    void set_relations(CgenNodeP nd);
 public:
-   static std::vector<StringEntryP> class_nameTab_entries;
-   static std::map<StringEntryP, int> class_tag_pair;
-   static int next_class_tag;
-   static std::map<std::string, size_t> method_class_offset;
    CgenClassTable(Classes, ostream& str);
    void code();
    CgenNodeP root();
@@ -84,3 +77,4 @@ class BoolConst
   void code_def(ostream&, int boolclasstag);
   void code_ref(ostream&) const;
 };
+

@@ -24,12 +24,6 @@
 
 #include "cgen.h"
 #include "cgen_gc.h"
-#include <memory>
-#include <string>
-#include <map>
-#include <queue>
-#include <sstream>
-#include <sys/stat.h>
 
 extern void emit_string_constant(ostream& str, char *s);
 extern int cgen_debug;
@@ -37,17 +31,6 @@ extern int cgen_debug;
 extern int disable_reg_alloc;
 extern int node_lineno;
 
-extern std::vector<StringEntryP> CgenClassTable::class_nameTab_entries;
-extern std::map<StringEntryP, int> CgenClassTable::class_tag_pair;
-extern int CgenClassTable::next_class_tag;
-extern std::map<std::string, size_t> CgenClassTable::method_class_offset;
-
-static SymbolTable<Symbol, StringEntry> cur_attr_posi_info;
-static StrTable attr_offset_stringtable;
-static int label_idx=0;
-static CgenNodeP cur_node_global; // used when generating codes for method
-static size_t next_temp_number_in_stack=0; // used to locate allocated local variable
-static size_t total_number_of_temp_global=0; // used to record number of all temporaries of current method
 //
 // Three symbols from the semantic analyzer (semant.cc) are used.
 // If e : No_type, then no code is generated for e.
@@ -898,347 +881,67 @@ CgenNode::CgenNode(Class_ nd, Basicness bstatus, CgenClassTableP ct) :
 //*****************************************************************
 
 void assign_class::code(ostream &s) {
-  expr->code(s); // calculate expression and final result is stored in $a0
-  std::string attr_posi_info(cur_attr_posi_info.lookup(name)->get_string());
-  s << SW << ACC << " " << attr_posi_info << endl;
-  // remind GC (garbage collector) about the update of variables
-  std::string offset_of_variable="", register_label="";
-  size_t i=0;
-  for(;i<attr_posi_info.size();i++){
-    if(attr_posi_info[i]=='('){
-      break;
-    }
-    offset_of_variable+=attr_posi_info[i];
-  }
-
-  i++;
-  for(;i<attr_posi_info.size();i++){
-    if(attr_posi_info[i]==')'){
-      break;
-    }
-    register_label+=attr_posi_info[i];
-  }
-  s << ADDIU << A1 << " " << register_label << " " << offset_of_variable << endl; // load object address into $a1
-  emit_jal("_GenGC_Assign", s); // jump to _GenGC_Assign procedure
 }
 
 void static_dispatch_class::code(ostream &s) {
-  // store arguments in the stack in order
-  for(int i = actual->first(); actual->more(i); i = actual->next(i)){
-    actual->nth(i)->code(s); // load arguements into $a0
-    emit_store(ACC, 0, SP, s); // store arguement in $a0 into stack
-    emit_addiu(SP, SP, -4, s); // push into stack
-  }
-
-  expr->code(s); // generate codes object
-
-  int label_in_use = label_idx++;
-
-  emit_bne(ACC, ZERO, label_in_use, s); // check whether dispatched object is valid
-  s << LA << ACC << " "; (stringtable.lookup_string(cur_node_global->filename->get_string()))->code_ref(s); s << endl; // load filename of the class
-  emit_load_imm(T1, get_line_number(), s); // load line number
-  emit_jal("_dispatch_abort", s); // jump to dispatch handler
-  emit_label_def(label_in_use, s); // emit label for branch
-  std::string class_method_name(type_name->get_string());
-  emit_load_address(T1, ((char *) (class_method_name+DISPTAB_SUFFIX).c_str()), s); // load static dispatch table address
-  class_method_name+=" ";
-  class_method_name+=name->get_string();
-  emit_load(T1, CgenClassTable::method_class_offset[class_method_name], T1, s); // load method address from dispatch table
-  emit_jalr(T1, s); // jump to dispatch method
 }
 
 void dispatch_class::code(ostream &s) {
-  // store arguments in the stack in order
-  for(int i = actual->first(); actual->more(i); i = actual->next(i)){
-    actual->nth(i)->code(s); // load arguements into $a0
-    emit_store(ACC, 0, SP, s); // store arguement in $a0 into stack
-    emit_addiu(SP, SP, -4, s); // push into stack
-  }
-
-  expr->code(s); // generate codes object
-
-  int label_in_use = label_idx++;
-
-  emit_bne(ACC, ZERO, label_in_use, s); // check whether dispatched object is valid
-  s << LA << ACC << " "; (stringtable.lookup_string(cur_node_global->filename->get_string()))->code_ref(s); s << endl; // load filename of the class
-  emit_load_imm(T1, get_line_number(), s); // load line number
-  emit_jal("_dispatch_abort", s); // jump to dispatch handler
-  emit_label_def(label_in_use, s); // emit label for branch
-  emit_load(T1, 2, ACC, s); // load dispatch table address
-  std::string class_method_name(expr->type->get_string());
-  if(class_method_name=="SELF_TYPE"){
-    class_method_name=cur_node_global->name->get_string();
-  }
-
-  class_method_name+=" ";
-  class_method_name+=name->get_string();
-  emit_load(T1, CgenClassTable::method_class_offset[class_method_name], T1, s); // load method address from dispatch table
-  emit_jalr(T1, s); // jump to dispatch method
 }
 
 void cond_class::code(ostream &s) {
-  int else_label_idx=label_idx++;
-  int fi_label_idx=label_idx++;
-  pred->code(s);
-  emit_load(T1, 3, ACC, s); // load value of returning bool object of the predicate
-  emit_beqz(T1, else_label_idx, s); // jump to else if predicate value is false
-  then_exp->code(s); // generate codes for then expression
-  emit_branch(fi_label_idx, s); // finish then expression, jump directly to fi
-  emit_label_def(else_label_idx, s); // emit else label
-  else_exp->code(s); // generate codes for else expression
-  emit_label_def(fi_label_idx, s); // emit fi label
 }
 
 void loop_class::code(ostream &s) {
-  int pred_label_idx=label_idx++;
-  int pool_label_idx=label_idx++;
-  emit_label_def(pred_label_idx, s); // emit predicate label
-  pred->code(s); // generate codes for predicate
-  emit_load(T1, 3, ACC, s); // load value of return bool object from the predicate object
-  emit_beq(T1, ZERO, pool_label_idx, s); // jump to pool if predicate value is false
-  body->code(s); // generate codes for body
-  emit_branch(pred_label_idx, s); // jump to predicate after one loop finishes
-  emit_label_def(pool_label_idx, s); // emit pool label
-  emit_move(ACC, ZERO, s); // clear the return result of loop
 }
 
 void typcase_class::code(ostream &s) {
-  size_t number_of_cases=0;
-  std::map<int, branch_class*> sort_symbol_map; // map will automatically sort symbol by size_t
-  for(int i = cases->first(); cases->more(i); i = cases->next(i)){
-    // we can safely cast Case_class to brach_class
-    StringEntryP rt=stringtable.lookup_string((((branch_class*) cases->nth(i))->type_decl)->get_string());
-    sort_symbol_map[CgenClassTable::class_tag_pair[rt]]=((branch_class*) cases->nth(i));
-    number_of_cases++;
-  }
-  int start_label_for_typecase=label_idx; // record the starting value of typecase
-  int esac_label_idx=start_label_for_typecase++; // record the starting value of typecase
-  label_idx+=(number_of_cases+2); // reserve labels for typecase #(label for all case)+#(default for no case match)+#()
-
-  expr->code(s); // generate codes for expression part in typecase
-  emit_bne(ACC, ZERO, start_label_for_typecase++, s); // check whether return value of expr is null
-  s << LA << ACC << " "; (stringtable.lookup_string(cur_node_global->filename->get_string()))->code_ref(s); s << endl; // load filename of the class
-  emit_load_imm(T1, get_line_number(), s); // load line number
-  emit_jal("_case_abort2", s); // jump to case abort 2
-  bool load_return_class_tag=false;
-
-  // allocate space to hold return value of case
-  next_temp_number_in_stack++;
-  std::ostringstream os;
-  os << (total_number_of_temp_global-next_temp_number_in_stack)*4;
-  os << "($fp)";
-
-  // generate codes for each case
-  // case with higer tag value will be handled first
-  for(
-      std::map<int, branch_class*>::reverse_iterator it = sort_symbol_map.rbegin();
-      it != sort_symbol_map.rend();
-      it++
-    ) 
-  {
-    cur_attr_posi_info.enterscope(); 
-    StringEntryP rt=stringtable.lookup_string(it->second->type_decl->get_string());
-    int class_tag=CgenClassTable::class_tag_pair[rt];
-    emit_label_def(start_label_for_typecase-1, s); // emit label for case
-    if(!load_return_class_tag){
-      // only need to load class tag once
-      emit_load(T2, 0, ACC, s); // load class tag for the class
-      load_return_class_tag=true;
-    }
-    emit_blti(T2, class_tag, start_label_for_typecase, s); // jump to next label if current class tag is smaller
-    emit_bgti(T2, class_tag, start_label_for_typecase, s); // jump to next label if current class tag is larger
-    // record position of temporaries in stack
-    cur_attr_posi_info.addid(
-      it->second->name,
-      attr_offset_stringtable.add_string((char*) os.str().c_str())
-    );
-    s << SW << ACC << " " << os.str() << endl; // store return result object of expr
-    it->second->expr->code(s); // generate codes for expression
-    emit_branch(esac_label_idx, s); // branch to esac
-    start_label_for_typecase++;
-    cur_attr_posi_info.exitscope();
-  }
-  emit_label_def(start_label_for_typecase-1, s); // emit label for no case match
-  emit_jal("_case_abort", s); // jump to case abort if no case macthed
-  emit_label_def(esac_label_idx, s); // emit label for esac
 }
 
 void block_class::code(ostream &s) {
-  for(int i = body->first(); body->more(i); i = body->next(i)){
-    body->nth(i)->code(s);
-  }
 }
 
 void let_class::code(ostream &s) {
-  cur_attr_posi_info.enterscope();
-  init->code(s); // do initializatoin of object with return object in $a0
-  std::ostringstream os;
-  next_temp_number_in_stack++;
-  os << (total_number_of_temp_global-next_temp_number_in_stack)*4;
-  os << "($fp)";
-  std::string attr_posi_info=os.str();
-  // record position of temporaries in stack
-  cur_attr_posi_info.addid(
-    identifier,
-    attr_offset_stringtable.add_string((char*) attr_posi_info.c_str())
-  );
-  s << SW << ACC << " " << attr_posi_info << endl; // store initialized object in $a0 to stack position
-  std::string offset_of_variable="", register_label="";
-  size_t i=0;
-  for(;i<attr_posi_info.size();i++){
-    if(attr_posi_info[i]=='('){
-      break;
-    }
-    offset_of_variable+=attr_posi_info[i];
-  }
-
-  i++;
-  for(;i<attr_posi_info.size();i++){
-    if(attr_posi_info[i]==')'){
-      break;
-    }
-    register_label+=attr_posi_info[i];
-  }
-  s << ADDIU << A1 << " " << register_label << " " << offset_of_variable << endl; // load object address into $a1
-  emit_jal("_GenGC_Assign", s); // jump to _GenGC_Assign procedure
-  body->code(s); // generate codes for body
-  cur_attr_posi_info.exitscope();
 }
 
 void plus_class::code(ostream &s) {
-  e1->code(s); // generate codes for expression1
-  emit_store(ACC, 0, SP, s); // store result in stack
-  emit_addiu(SP, SP, -4, s); // push in stack
-  e2->code(s); // generate codes for expression2 with value store at $a0
-  emit_jal("Object.copy", s); // copy return result of expression2 which stored at $a0
-  emit_load(T2, 3, ACC, s); // load value of the return copy Int object of expresson2
-  emit_load(T1, 1, SP, s); // load the return Int object of expression1
-  emit_load(T1, 3, T1, s); // load value of the return copy Int object of expresson1
-  emit_add(T1, T1, T2, s); // add value of e1 and e2
-  emit_store(T1, 3, ACC, s); // store result in value field in copied Int object 
-  emit_addiu(SP, SP, 4, s); // pop in stack
 }
 
 void sub_class::code(ostream &s) {
-  e1->code(s); // generate codes for expression1
-  emit_store(ACC, 0, SP, s); // store result in stack
-  emit_addiu(SP, SP, -4, s); // push in stack
-  e2->code(s); // generate codes for expression2 with value store at $a0
-  emit_jal("Object.copy", s); // copy return result of expression2 which stored at $a0
-  emit_load(T2, 3, ACC, s); // load value of the return copy Int object of expresson2
-  emit_load(T1, 1, SP, s); // load the return Int object of expression1
-  emit_load(T1, 3, T1, s); // load value of the return copy Int object of expresson1
-  emit_sub(T1, T1, T2, s); // sub value of e1 and e2
-  emit_store(T1, 3, ACC, s); // store result in value field in copied Int object 
-  emit_addiu(SP, SP, 4, s); // pop in stack
 }
 
 void mul_class::code(ostream &s) {
-  e1->code(s); // generate codes for expression1
-  emit_store(ACC, 0, SP, s); // store result in stack
-  emit_addiu(SP, SP, -4, s); // push in stack
-  e2->code(s); // generate codes for expression2 with value store at $a0
-  emit_jal("Object.copy", s); // copy return result of expression2 which stored at $a0
-  emit_load(T2, 3, ACC, s); // load value of the return copy Int object of expresson2
-  emit_load(T1, 1, SP, s); // load the return Int object of expression1
-  emit_load(T1, 3, T1, s); // load value of the return copy Int object of expresson1
-  emit_mul(T1, T1, T2, s); // mul value of e1 and e2
-  emit_store(T1, 3, ACC, s); // store result in value field in copied Int object 
-  emit_addiu(SP, SP, 4, s); // pop in stack
 }
 
 void divide_class::code(ostream &s) {
-  e1->code(s); // generate codes for expression1
-  emit_store(ACC, 0, SP, s); // store result in stack
-  emit_addiu(SP, SP, -4, s); // push in stack
-  e2->code(s); // generate codes for expression2 with value store at $a0
-  emit_jal("Object.copy", s); // copy return result of expression2 which stored at $a0
-  emit_load(T2, 3, ACC, s); // load value of the return copy Int object of expresson2
-  emit_load(T1, 1, SP, s); // load the return Int object of expression1
-  emit_load(T1, 3, T1, s); // load value of the return copy Int object of expresson1
-  emit_div(T1, T1, T2, s); // div value of e1 and e2
-  emit_store(T1, 3, ACC, s); // store result in value field in copied Int object 
-  emit_addiu(SP, SP, 4, s); // pop in stack
 }
 
 void neg_class::code(ostream &s) {
-  e1->code(s); // generate codes for expressoin
-  emit_jal("Object.copy", s); // copy integer object in $a0
-  emit_load(T1, 3, ACC, s); // load integer value into $t1
-  emit_neg(T1, T1, s); // do negative operation on value
-  emit_store(T1, 3, ACC, s); // load integer value into $t1
 }
 
 void lt_class::code(ostream &s) {
-  e1->code(s); // generate codes for e1
-  emit_store(ACC, 0, SP, s); // store result in stack
-  emit_addiu(SP, SP, -4, s); // push in stack
-  e2->code(s); // generate codes for e1
-  emit_load(T2, 3, ACC, s); // load value of return object of e2 into $t2
-  emit_load(T1, 1, SP, s); // load result object of e1 into $t1
-  emit_load(T1, 3, T1, s); // load value of result object in $t1
-  s << LA << ACC << " "; truebool.code_ref(s); s << endl; // load true into $a0
-  int return_label_idx=label_idx++;
-  emit_blt(T1, T2, return_label_idx, s); // if $t1<$2 jump to return label
-  s << LA << ACC << " "; falsebool.code_ref(s); s << endl; // load true into $a0
-  emit_label_def(return_label_idx, s); // emit return label
-  emit_addiu(SP, SP, 4, s); // pop in stack
 }
 
 void eq_class::code(ostream &s) {
-  e1->code(s); // generate codes in expressoin1 with return value stored in $a0
-  emit_store(ACC, 0, SP, s); // store result in stack
-  emit_addiu(SP, SP, -4, s); // push in stack
-  e2->code(s); // generate codes in expressoin2 with return value stored in $a0
-  emit_move(T2, ACC, s); // load result object of expresson2 into $t2
-  // emit_load(T2, 3, T2, s); // load result value of expresson2 into $t2
-  emit_load(T1, 1, SP, s); // load result of expression1 into $t1
-  // emit_load(T1, 3, T1, s); // load value of result of expression1 into $t1
-  s << LA << ACC << " "; truebool.code_ref(s); s << endl; // load true into $a0
-  int branch_label=label_idx++;
-  // if return address of e1 and e2 are the same object, then value check is not necessary
-  // in other words, we could jump through value check
-  emit_beq(T1, T2, branch_label, s);
-  s << LA << A1 << " "; falsebool.code_ref(s); s << endl; // load false into $a1
-  emit_jal("equality_test", s); // compare all value in T1 and T2
-  emit_label_def(branch_label, s); // write out label
-  emit_addiu(SP, SP, 4, s); // pop in stack
 }
 
 void leq_class::code(ostream &s) {
-  e1->code(s); // generate codes for e1
-  emit_store(ACC, 0, SP, s); // store result in stack
-  emit_addiu(SP, SP, -4, s); // push in stack
-  e2->code(s); // generate codes for e1
-  emit_load(T2, 3, ACC, s); // load value of return object of e2 into $t2
-  emit_load(T1, 1, SP, s); // load result object of e1 into $t1
-  emit_load(T1, 3, T1, s); // load value of result object in $t1
-  s << LA << ACC << " "; truebool.code_ref(s); s << endl; // load true into $a0
-  int return_label_idx=label_idx++;
-  emit_bleq(T1, T2, return_label_idx, s); // if $t1<$2 jump to return label
-  s << LA << ACC << " "; falsebool.code_ref(s); s << endl; // load true into $a0
-  emit_label_def(return_label_idx, s); // emit return label
-  emit_addiu(SP, SP, 4, s); // pop in stack
 }
 
 void comp_class::code(ostream &s) {
-  e1->code(s); // generate codes for e1
-  emit_load(T1, 3, ACC, s); // store value of bool object returned by e1
-  s << LA << ACC << " "; truebool.code_ref(s); s << endl; // load true into $a0
-  int return_label_idx=label_idx++;
-  emit_beqz(T1, return_label_idx, s); // jump to return label if $t1 is false(0)
-  s << LA << ACC << " "; falsebool.code_ref(s); s << endl; // load false object into $a0
-  emit_label_def(return_label_idx, s); // emit return label
 }
 
 void int_const_class::code(ostream& s)  
 {
-  emit_load_int(ACC, inttable.lookup_string(token->get_string()), s);
+  //
+  // Need to be sure we have an IntEntry *, not an arbitrary Symbol
+  //
+  emit_load_int(ACC,inttable.lookup_string(token->get_string()),s);
 }
 
 void string_const_class::code(ostream& s)
 {
-  emit_load_string(ACC, stringtable.lookup_string(token->get_string()), s);
+  emit_load_string(ACC,stringtable.lookup_string(token->get_string()),s);
 }
 
 void bool_const_class::code(ostream& s)
@@ -1247,36 +950,15 @@ void bool_const_class::code(ostream& s)
 }
 
 void new__class::code(ostream &s) {
-  std::string class_prototype(type_name->get_string());
-  class_prototype+=PROTOBJ_SUFFIX;
-  emit_load_address(ACC, ((char *) class_prototype.c_str()), s); // load target object's prototype
-  emit_jal("Object.copy", s); // allocate a space follow template of target object's prototype
-  std::string class_init(type_name->get_string());
-  class_init+=CLASSINIT_SUFFIX;
-  emit_jal(((char *) class_init.c_str()), s); // do initialization on allocated space returned at $a0 
 }
 
 void isvoid_class::code(ostream &s) {
-  e1->code(s); // generate codes for e1
-  emit_move(T1, ACC, s); // move return object of e1 to $t1
-  s << LA << ACC << " "; truebool.code_ref(s); s << endl; // load true into $a0
-  int return_label_idx=label_idx++;
-  emit_beqz(T1, return_label_idx, s); // jump to return label if object not initialized
-  s << LA << ACC << " "; falsebool.code_ref(s); s << endl; // load true into $a0
-  emit_label_def(return_label_idx, s); // emit return label
 }
 
 void no_expr_class::code(ostream &s) {
-  emit_move(ACC, ZERO, s);
 }
 
 void object_class::code(ostream &s) {
-  std::string object_name(name->get_string());
-  if(name==self){
-    emit_move(ACC, SELF, s); // load object itself into $a0
-  }
-  else{
-    s << LW << ACC << " " << cur_attr_posi_info.lookup(name) << endl; // load attribute into $a0
-  }
 }
+
 
