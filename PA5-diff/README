@@ -165,33 +165,105 @@ Trabalho realizado por Vinicius Silva Gomes - 2021421869
 para a disciplina DCC053 - Compiladores I, no semestre
 2023/1.
 
+Geração de Código
+
+A implementação de geração de código feita usa dos recursos
+padrões já disponibilizados para a linguagem COOL. No caso,
+o coletor de lixo, que já foi previamente implementado; e a
+biblioteca de runtime system, que irá facilitar bastante
+a implementação, tornando-a bem mais simples do que se fosse
+necessário implementar todos essas construções.
+
+Sendo assim, a geração de código pode ser vista como uma
+sequência de passos até que seja possível gerar o código
+de baixo nível (Assembly) que produz a ação desejada em alto
+nível. Essas fases são:
+
+* Construir a árvore de dependência entre as classes;
+* Atravessar essa árvore preenchendo as informações possíveis
+  com os dados obtidos da relação de herança;
+* Construir o ambiente de compilação para cada classe (
+  classe Environment).
+* Gerar as dispatch tables para cada classe presente na
+  estrutura;
+* Gerar o código para o ambiente de compilação de cada classe
+  (gerar as prototype tables, dispatch tables e tabelas para a
+   checagem de herança para cada classe presente no programa);
+* Gerar o código para cada método das classes.
+
+O processo de geração de código para COOL é bastante complicado
+pelo fato de COOL ser uma linguagem orientada a objetos, o que
+exige que a geração de código tenha de seguir uma estrutura de
+objetos e memória bem mais complexa e persistente ao longo de
+toda a etapa de geração de código.
+
+A representação das classes se da em blocos consecutivos de
+memória que armazenam as informações necessárias para
+a execução das mesmas. Esse bloco aparece nas definições de
+prototype, em blocos que seguem a seguinte estrutura:
+
+* Nome da classe;
+* Tamanho da classe (em palavras do processador);
+* Ponteiro para a dispatch table da classe (tabela com os
+  métodos da classe);
+* Atributos da classe na ordem em que são definidos (os atributos
+  herdados aparecem primeiro que os atributos da classe para
+  que o acesso aos atributos herdados seja facilitado e "padrão",
+  de certa forma, entre todas as classes que herdam).
+
+As funções definidas serão armazenadas na memória através
+de registros de ativação: blocos consecutivos de memória, assim
+como as definições de classes, que apresentam uma estrutura fixa
+para armazenar as variáveis locais da função, os parâmetros, o
+endereço de retorno e, por fim, um ponteiro para um registro de
+ativação anterior, de modo a permitir recursão. Toda essa estrutura,
+assim como dito no começo da explicação, foi abstraída pelo runtime
+system de COOL e tem a coleta de lixo já previamente implementada.
+No entanto, todas essas questões são bastante pertinentes na hora
+de se projetar um gerador de código, visto que podem variar de
+linguagem para linguagem e é necessário manter esse padrão ao longo
+de todo o projeto do gerador de código.
+
+
+Indo para a parte principal do gerador de código, precisamos, então,
+percorrer toda a árvore sintática abstrata que foi gerada no analisador
+sintático e gerar código Assembly para cada definição do programa.
+Como já passamos pela análise léxica, análise sintática e análise
+semântica, uma suposição que fazemos é que o programa definido pela
+AST é perfeitamente válido do ponto de vista das estruturas da linguagem.
+Todavia, o programa ainda pode apresentar erros, erros de lógica que foram
+inseridos pelo próprio programador na escrita do programa.
+
+
+
+
 ----------------
 
-Com todas as modificacoes realizadas nos arquivos, eh
-possivel entao gerar codigo para programas COOL bem formados.
-Idealmente, depois da analise semantica os programas devem
-conter apenas erros de logica, introduzidos pelo proprio
-programador. No entanto, caso alguma construcao incorreta
-seja percebida no codigo Assembly, o gerador de codigo eh
-capaz de abortar a execucao e informar que houve um
+Com todas as modificações realizadas nos arquivos, é
+possível, então, gerar código para programas COOL bem formados.
+Idealmente, depois da análise semântica, os programas devem
+conter apenas erros de lógica, introduzidos pelo próprio
+programador. No entanto, caso alguma construção incorreta
+seja percebida no código Assembly, o gerador de código é
+capaz de abortar a execução e informar que houve um
 comportamento inesperado.
 
-Alem disso, para exercitar o gerador de codigo, alguns
-testes foram desenvolvidos para verificar se ele eh capaz
+Além disso, para exercitar o gerador de código, alguns
+testes foram desenvolvidos para verificar se ele é capaz
 de gerar o Assembly correto para os mais diversos,
 completos e complexos programas COOL.
 
-Assim como pedido, alem dos testes construidos para as
-mais diversas situacoes possiveis na geracao de codigo,
+Assim como pedido, alem dos testes construídos para as
+mais diversas situações possíveis na geração de código,
 o programa example.cl foi alterado para um programa COOL
-mais completo e que nao apresente erros nas fases
-anteriores do compilador e, portanto, pode ter seu codigo
+mais completo e que não apresente erros nas fases
+anteriores do compilador e, portanto, pode ter seu código
 gerado e executado pelo simulador do MIPS corretamente.
 
-O programa em questao eh um exemplo fornecido de como
-seria uma simulacao do Jogo da Vida de Conway para
+O programa em questão é um exemplo fornecido de como
+seria uma simulação do Jogo da Vida de Conway para
 alguns exemplos de estados iniciais e quais seriam as
-futuras geracoes daquele estado. Acredito que entre
+futuras gerações daquele estado. Acredito que entre
 todos os exemplos fornecidos e os testes criados durante
-o desenvolvimento do gerador de codigo, esse eh o maior,
-mais complexo e mais completo programa disponivel.
+o desenvolvimento do gerador de código, esse é o maior,
+mais complexo e mais completo programa disponível.
