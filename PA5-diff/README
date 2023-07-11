@@ -1,0 +1,300 @@
+README file for Programming Assignment 5  (C++ edition)
+=======================================================
+
+Your directory should now contain the following files:
+
+ Makefile	      -> [course dir]/assignments/PA5/Makefile
+ README
+ ast-lex.cc	      -> [course dir]/src/PA5/ast-lex.cc
+ ast-parse.cc	      -> [course dir]/src/PA5/ast-parse.cc
+ cgen-phase.cc	      -> [course dir]/src/PA5/cgen-phase.cc
+ cgen.cc
+ cgen.h
+ cgen_supp.cc
+ cool-tree.cc	      -> [course dir]/src/PA5/cool-tree.cc
+ cool-tree.handcode.h
+ dumptype.cc	      -> [course dir]/src/PA5/dumptype.cc
+ emit.h
+ example.cl
+ handle_flags.cc      -> [course dir]/src/PA5/handle_flags.cc
+ mycoolc	      -> [course dir]/src/PA5/mycoolc*
+ stringtab.cc	      -> [course dir]/src/PA5/stringtab.cc
+ tree.cc	      -> [course dir]/src/PA5/tree.cc
+ utilities.cc	      -> [course dir]/src/PA5/utilities.cc
+ *.d
+
+The include (.h) files for this assignment can be found in 
+[course dir]/include/PA5
+
+	The Makefile contains targets for compiling and running your
+	program, as well as handing it in. DO NOT MODIFY.
+
+	The README contains this info. Part of the assignment is to
+	fill the README with the write-up for your project. You should
+	explain design decisions, explain why your code is correct,
+	and why your test cases are adequate. It is part of the
+	assignment to clearly and concisely explain things in text as
+	well as to comment your code. Just edit this file.
+
+	In example.cl you should write a correct Cool program which
+	tests as many aspects of the code generator as possible. It
+	should pass your code generator, and running spim on the
+	generated output should run the program correctly.
+
+	cgen.cc is the skeleton file for the code generator. This
+	skeleton is much larger than the ones for previous
+	assignments.  The skeleton provides three components of the
+	code generator:
+
+		- functions to build the inheritance graph; (we supply
+		  this in case you didn't get this working for PA4)
+
+		- functions to emit global data and constants;
+		 
+		- functions to emit spim instructions; (we supply
+		  these last two to save you some tedious coding)
+
+	You should work to understand this code, and it will help you
+        write the rest of the code generator.
+
+	cgen.h is the header file for the code generator. Feel free to
+	add anything you need.
+
+	cgen_supp.cc is general support code for the code generator.
+	You can add functions as you see fit, but do not modify the 3
+	functions:
+
+		o byte_mode
+		o ascii_mode
+		o emit_string_constant
+
+	emit.h defines a bunch of macros which should come in handy
+	when you actually want to emit code. Feel free to change
+	anything here to suit your needs.
+
+        cgen-phase.cc supplies the driver for the compiler. You should
+        not modify this code.  The script mycoolc can pass any of the
+        standard flags to the code generator; for this assignment, -c
+        (code generator debug) may be useful as it sets a global
+        variable cgen_debug to true (1).  If you want your code
+        generator to print debug information when the option is set,
+        write your debug code in the following format:
+
+	      if (cgen_debug)
+	      {
+		...
+	      }
+
+	symtab.h contains a symbol table implementation. You may
+        modify this file if you'd like.  To do so, remove the link and
+        copy `[course dir]/include/PA5/symtab.h' to your local
+        directory.
+
+	cool.h contains definitions that are used by almost all parts
+	of the compiler. DO NOT MODIFY.
+
+        tree.h contains the base class `tree_node' of the AST nodes.
+
+        cool-tree.cc, cool-tree.h, and cool-tree.handcode.h contain
+        the declarations and definitions of code generation AST nodes.
+        You may add fields as you wish, but you shouldn't modify any
+        of the methods already there except `code', which you may
+        modify or remove as you wish.  Note that cool-tree.handcode.h
+        is different from the same file in PA4---this file contains
+        function definitions needed for the cgen.cc skeleton.  You may
+        modify cool-tree.h or cool-tree.handcode.h, but don't modify
+        cool-tree.cc.  Place all method definitions in cgen.cc
+
+	stringtab.h contains functions to manipulate the string table.
+	DO NOT MODIFY.
+
+	dumptype.cc contains functions for printing out an abstract
+	syntax tree.  DO NOT MODIFY.
+
+        *.d dependency files, generated automatically by the makefile.
+
+Instructions
+------------
+
+	To compile your compiler and code generator type:
+
+	% gmake cgen
+
+	To test your compiler, type:
+
+	% ./mycoolc [-o output filename] <file1.cl> <file2.cl> ...
+
+	This command parses all the cool files given on the command
+	line, passes them through the semantic checker, and then hands
+	the program AST to your code generator.
+
+	To run your compiler on the file example.cl, type:
+
+	% gmake dotest
+
+	To run the produced code:
+
+	% spim -file file1.s  /* or the output filename you chose */
+	
+	To turnin your work type:
+
+	% gmake submit-clean
+
+	And run the "submit" program following the instructions on the
+	course web page.
+	
+ 	You may turn in the assignment as many times as you like.
+ 	However, only the last version will be retained for grading.
+
+	If you change architectures you must issue
+
+	% gmake clean
+
+	when you switch from one type of machine to the other.  If at
+	some point you get weird errors from the linker, you probably
+	forgot this step.
+
+	GOOD LUCK!
+
+---8<------8<------8<------8<---cut here---8<------8<------8<------8<---
+
+Write-up for PA5
+----------------
+
+Trabalho realizado por Vinicius Silva Gomes - 2021421869
+para a disciplina DCC053 - Compiladores I, no semestre
+2023/1.
+
+Geração de Código
+
+A implementação de geração de código feita usa dos recursos
+padrões já disponibilizados para a linguagem COOL. No caso,
+o coletor de lixo, que já foi previamente implementado; e a
+biblioteca de runtime system, que irá facilitar bastante
+a implementação, tornando-a bem mais simples do que se fosse
+necessário implementar todos essas construções.
+
+Sendo assim, a geração de código pode ser vista como uma
+sequência de passos até que seja possível gerar o código
+de baixo nível (Assembly) que produz a ação desejada em alto
+nível. Essas fases são:
+
+* Construir a árvore de dependência entre as classes;
+* Atravessar essa árvore preenchendo as informações possíveis
+  com os dados obtidos da relação de herança;
+* Construir o ambiente de compilação para cada classe (
+  classe Environment).
+* Gerar as dispatch tables para cada classe presente na
+  estrutura;
+* Gerar o código para o ambiente de compilação de cada classe
+  (gerar as prototype tables, dispatch tables e tabelas para a
+   checagem de herança para cada classe presente no programa);
+* Gerar o código para cada método das classes.
+
+O processo de geração de código para COOL é bastante complicado
+pelo fato de COOL ser uma linguagem orientada a objetos, o que
+exige que a geração de código tenha de seguir uma estrutura de
+objetos e memória bem mais complexa e persistente ao longo de
+toda a etapa de geração de código.
+
+A representação das classes se da em blocos consecutivos de
+memória que armazenam as informações necessárias para
+a execução das mesmas. Esse bloco aparece nas definições de
+prototype, em blocos que seguem a seguinte estrutura:
+
+* Nome da classe;
+* Tamanho da classe (em palavras do processador);
+* Ponteiro para a dispatch table da classe (tabela com os
+  métodos da classe);
+* Atributos da classe na ordem em que são definidos (os atributos
+  herdados aparecem primeiro que os atributos da classe para
+  que o acesso aos atributos herdados seja facilitado e "padrão",
+  de certa forma, entre todas as classes que herdam).
+
+As funções definidas serão armazenadas na memória através
+de registros de ativação: blocos consecutivos de memória, assim
+como as definições de classes, que apresentam uma estrutura fixa
+para armazenar as variáveis locais da função, os parâmetros, o
+endereço de retorno e, por fim, um ponteiro para um registro de
+ativação anterior, de modo a permitir recursão. Toda essa estrutura,
+assim como dito no começo da explicação, foi abstraída pelo runtime
+system de COOL e tem a coleta de lixo já previamente implementada.
+No entanto, todas essas questões são bastante pertinentes na hora
+de se projetar um gerador de código, visto que podem variar de
+linguagem para linguagem e é necessário manter esse padrão ao longo
+de todo o projeto do gerador de código.
+
+
+Indo para a parte principal do gerador de código, precisamos, então,
+percorrer toda a árvore sintática abstrata que foi gerada no
+analisador sintático e gerar código Assembly para cada definição do
+programa. Como já passamos pela análise léxica, análise sintática e
+análise semântica, uma suposição que fazemos é que o programa definido
+pela AST é perfeitamente válido do ponto de vista das estruturas da
+linguagem. Todavia, o programa ainda pode apresentar erros, erros de
+lógica que foram inseridos pelo próprio programador na escrita do
+programa.
+
+Como não estamos querendo otimizar o código gerado, a ideia é apenas
+percorrer a AST gerando código de máquina de pilha de cada nó presente
+na árvore. O funcionamento básico da máquina de pilha é utilizar um
+registrador como acumulador e um registrador como topo de pilha e,
+então, gerar código para as expressões e acumular os resultados no
+acumulador, usando o registrador de topo de pilha como uma forma de
+evitar acessos a memória, o que poderia deixar o processo de geração
+de código muito mais lento.
+
+A estrutura para esse processo já foi definida no arquivo cgen.cc,
+juntamente com cada nó possível na AST, para que seja possível
+percorrer e gerar código sobre eles. Como a estrutura já está definida,
+o processo se torna um pouco mais mecânico, no qual devemos preencher
+o código de cada nó com os códigos Assembly que realizam a operação.
+
+Para facilitar o acesso aos registradores, o nome de cada um deles
+foi definido como macros, tornando o acesso global em todas as
+partes do gerador de código.
+
+Além disso, no arquivo cgen.h, a classe State foi definida, sendo ela
+a responsável por armazenar informações sobre varíaveis, parâmetros,
+escopo, etc; o que irá facilitar bastante a geração de código para os
+nós da AST, no arquivo cgen.cc.
+
+No mais, assim como já dito, o restante do processo ocorreu de
+maneira mecânica, onde cada nó era construído baseado na ideia de
+como deveria ser seu funcionamento (bastante inspirado na análsie
+semântica) e, então, diversos testes eram feitos para validar se 
+o código gerado funcionava bem individualmente e, posteriormente,
+quando mais nós foram implementados, se o funcionamento do todo,
+combinado, era o esperado do programa.
+
+
+----------------
+
+Com todas as modificações realizadas nos arquivos, é
+possível, então, gerar código para programas COOL bem formados.
+Idealmente, depois da análise semântica, os programas devem
+conter apenas erros de lógica, introduzidos pelo próprio
+programador. No entanto, caso alguma construção incorreta
+seja percebida no código Assembly, o gerador de código é
+capaz de abortar a execução e informar que houve um
+comportamento inesperado.
+
+Além disso, para exercitar o gerador de código, alguns
+testes foram desenvolvidos para verificar se ele é capaz
+de gerar o Assembly correto para os mais diversos,
+completos e complexos programas COOL.
+
+Assim como pedido, alem dos testes construídos para as
+mais diversas situações possíveis na geração de código,
+o programa example.cl foi alterado para um programa COOL
+mais completo e que não apresente erros nas fases
+anteriores do compilador e, portanto, pode ter seu código
+gerado e executado pelo simulador do MIPS corretamente.
+
+O programa em questão é um exemplo fornecido de como
+seria uma simulação do Jogo da Vida de Conway para
+alguns exemplos de estados iniciais e quais seriam as
+futuras gerações daquele estado. Acredito que entre
+todos os exemplos fornecidos e os testes criados durante
+o desenvolvimento do gerador de código, esse é o maior,
+mais complexo e mais completo programa disponível.
