@@ -142,10 +142,10 @@ public:
    void code_ref(ostream&) const;
 };
 
-class Environment
+class State
 {
 public:
-   Environment() : m_class_node(nullptr) {}
+   State() : m_class_node(nullptr) {}
 
    void EnterScope() {
       m_scope_lengths.push_back(0);

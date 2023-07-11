@@ -508,7 +508,7 @@ void BoolConst::code_def(ostream& s, int boolclasstag) {
 }
 
 
-int Environment::AddObstacle() {
+int State::AddObstacle() {
     EnterScope();
     return AddVar(No_class);
 }
@@ -855,12 +855,12 @@ void method_class::code(ostream& s, CgenNode* class_node) {
   s << endl;
 
   s << "\t# evaluating expression and put it to ACC" << endl;
-  Environment env;
-  env.m_class_node = class_node;
+  State st;
+  st.m_class_node = class_node;
   for (int i = formals->first(); formals->more(i); i = formals->next(i)) {
-      env.AddParam(formals->nth(i)->GetName());
+      st.AddParam(formals->nth(i)->GetName());
   }
-  expr->code(s, env);
+  expr->code(s, st);
   s << endl;
 
   s << "\t# pop fp, s0, ra" << endl;
@@ -973,9 +973,9 @@ void CgenNode::code_init(ostream& s) {
         emit_store(ACC, 3 + idx, SELF, s);
       }
     } else {
-      Environment env;
-      env.m_class_node = this;
-      attrib->init->code(s, env);
+      State st;
+      st.m_class_node = this;
+      attrib->init->code(s, st);
       
       emit_store(ACC, 3 + idx, SELF, s);
 
@@ -1295,15 +1295,15 @@ CgenNode::CgenNode(Class_ nd, Basicness bstatus, CgenClassTableP ct) :
 //
 //*****************************************************************
 
-void assign_class::code(ostream& s, Environment env) {
+void assign_class::code(ostream& s, State st) {
   s << "\t# assign" << endl;
   s << "\t# eval the expr." << endl;
-  expr->code(s, env);
+  expr->code(s, st);
 
   s << "\t# find the lvalue." << endl;
   int idx;
 
-  if ((idx = env.LookUpVar(name)) != -1) {
+  if ((idx = st.LookUpVar(name)) != -1) {
     s << "\t# its' a let variable." << endl;
     
     emit_store(ACC, idx + 1, SP, s);
@@ -1312,7 +1312,7 @@ void assign_class::code(ostream& s, Environment env) {
       emit_addiu(A1, SP, 4 * (idx + 1), s);
       emit_jal("_GenGC_Assign", s);
     }
-  } else if ((idx = env.LookUpParam(name)) != -1){
+  } else if ((idx = st.LookUpParam(name)) != -1){
     s << "\t# it's a param." << endl;
     
     emit_store(ACC, idx + 3, FP, s);
@@ -1322,7 +1322,7 @@ void assign_class::code(ostream& s, Environment env) {
       emit_jal("_GenGC_Assign", s);
     }
   }
-  else if ((idx = env.LookUpAttrib(name)) != -1) {
+  else if ((idx = st.LookUpAttrib(name)) != -1) {
     s << "\t# it's an attribute." << endl;
 
     emit_store(ACC, idx + 3, SELF, s);
@@ -1336,22 +1336,22 @@ void assign_class::code(ostream& s, Environment env) {
   }
 }
 
-void static_dispatch_class::code(ostream& s, Environment env) {
+void static_dispatch_class::code(ostream& s, State st) {
   s << "\t# static dispatch" << endl;
   s << "\t# eval and save the params." << endl;
 
   std::vector<Expression> actuals = GetActuals();
-  Environment new_env = env;
+  State new_st = st;
 
   for (Expression expr : actuals) {
-    expr->code(s, env);
+    expr->code(s, st);
     emit_push(ACC, s);
-    env.EnterScope();
-    env.AddObstacle();
+    st.EnterScope();
+    st.AddObstacle();
   }
 
   s << "\t# eval the obj in dispatch." << endl;
-  expr->code(s, env);
+  expr->code(s, st);
 
   s << "\t# if obj = void: abort" << endl;
   emit_bne(ACC, ZERO, label_num, s);
@@ -1383,19 +1383,19 @@ void static_dispatch_class::code(ostream& s, Environment env) {
   s << endl;
 }
 
-void dispatch_class::code(ostream& s, Environment env) {
+void dispatch_class::code(ostream& s, State st) {
   s << "\t# dispatch" << endl;
   s << "\t# eval and save the params." << endl;
   std::vector<Expression> actuals = GetActuals();
 
   for (Expression expr : actuals) {
-    expr->code(s, env);
+    expr->code(s, st);
     emit_push(ACC, s);
-    env.AddObstacle();
+    st.AddObstacle();
   }
 
   s << "\t# eval the obj in dispatch." << endl;
-  expr->code(s, env);
+  expr->code(s, st);
 
   s << "\t# if obj = void: abort" << endl;
   emit_bne(ACC, ZERO, label_num, s);
@@ -1407,7 +1407,7 @@ void dispatch_class::code(ostream& s, Environment env) {
   ++label_num;
 
   // Get current class name;
-  Symbol _class_name = env.m_class_node->name;
+  Symbol _class_name = st.m_class_node->name;
 
   if (expr->get_type() != SELF_TYPE) {
     _class_name = expr->get_type();
@@ -1429,10 +1429,10 @@ void dispatch_class::code(ostream& s, Environment env) {
   s << endl;
 }
 
-void cond_class::code(ostream& s, Environment env) {
+void cond_class::code(ostream& s, State st) {
   s << "\t# if statement" << endl;
   s << "\t# eval condition." << endl;
-  pred->code(s, env);
+  pred->code(s, st);
 
   s << "\t# extract the bool content from acc to t1" << endl;
   emit_fetch_int(T1, ACC, s);
@@ -1445,7 +1445,7 @@ void cond_class::code(ostream& s, Environment env) {
   emit_beq(T1, ZERO, label_num_false, s);
   s << endl;
 
-  then_exp->code(s, env);
+  then_exp->code(s, st);
 
   s << "\t# jump to finish" << endl;
   emit_branch(label_num_finish, s);
@@ -1454,13 +1454,13 @@ void cond_class::code(ostream& s, Environment env) {
   s << "# False:" << endl;
   emit_label_def(label_num_false, s);
 
-  else_exp->code(s, env);
+  else_exp->code(s, st);
 
   s << "# Finish:" << endl;
   emit_label_def(label_num_finish, s);
 }
 
-void loop_class::code(ostream& s, Environment env) {
+void loop_class::code(ostream& s, State st) {
   int start = label_num;
   int finish = label_num + 1;
   label_num += 2;
@@ -1470,7 +1470,7 @@ void loop_class::code(ostream& s, Environment env) {
   emit_label_def(start, s);
 
   s << "\t# acc = pred" << endl;
-  pred->code(s, env);
+  pred->code(s, st);
 
   s << "\t# get int from bool" << endl;
   emit_fetch_int(T1, ACC, s);
@@ -1480,7 +1480,7 @@ void loop_class::code(ostream& s, Environment env) {
   emit_beq(T1, ZERO, finish, s);
   s << endl;
 
-  body->code(s, env);
+  body->code(s, st);
 
   s << "\t# jump to start" << endl;
   emit_branch(start, s);
@@ -1492,13 +1492,13 @@ void loop_class::code(ostream& s, Environment env) {
   emit_move(ACC, ZERO, s);
 }
 
-void typcase_class::code(ostream& s, Environment env) {
+void typcase_class::code(ostream& s, State st) {
   std::map<Symbol, int> _class_tags = cgen_classtable->GetClassTags();
   std::vector<CgenNode*> _class_nodes = cgen_classtable->GetClassNodes();
   
   s << "\t# case expr" << endl;
   s << "\t# eval e0" << endl;
-  expr->code(s, env);
+  expr->code(s, st);
 
   s << "\t# if e0 = void, abort" << endl;
   emit_bne(ACC, ZERO, label_num, s);
@@ -1589,10 +1589,10 @@ void typcase_class::code(ostream& s, Environment env) {
 
     s << "# eval expr " << caseidx << endl;
     emit_label_def(labelbeg + caseidx, s);
-    env.EnterScope();
-    env.AddVar(_name);
+    st.EnterScope();
+    st.AddVar(_name);
     emit_push(ACC, s);
-    _expr->code(s, env);
+    _expr->code(s, st);
     emit_addiu(SP, SP, 4, s);
 
     s << "\t# jump to finish" << endl;
@@ -1605,17 +1605,17 @@ void typcase_class::code(ostream& s, Environment env) {
   s << endl;
 }
 
-void block_class::code(ostream& s, Environment env) {
+void block_class::code(ostream& s, State st) {
   for (int i = body->first(); body->more(i); i = body->next(i)) {
-    body->nth(i)->code(s, env);
+    body->nth(i)->code(s, st);
   }
 }
 
-void let_class::code(ostream& s, Environment env) {
+void let_class::code(ostream& s, State st) {
   s << "\t# let expr" << endl;
   s << "\t# eval init" << endl;
 
-  init->code(s, env);
+  init->code(s, st);
 
   if (init->IsEmpty()) {
     if (type_decl == Str) {
@@ -1631,26 +1631,26 @@ void let_class::code(ostream& s, Environment env) {
   emit_push(ACC, s);
   s << endl;
 
-  env.EnterScope();
-  env.AddVar(identifier);
+  st.EnterScope();
+  st.AddVar(identifier);
 
-  body->code(s, env);
+  body->code(s, st);
 
   s << "\t# pop" << endl;
   emit_addiu(SP, SP, 4, s);
   s << endl;
 }
 
-void plus_class::code(ostream& s, Environment env) {
+void plus_class::code(ostream& s, State st) {
   s << "\t# int operation: add" << endl;
   s << "\t# eval e1 and push." << endl;
-  e1->code(s, env);
+  e1->code(s, st);
   emit_push(ACC, s);
-  env.AddObstacle();
+  st.AddObstacle();
   s << endl;
 
   s << "\t# eval e2 and make a copy for result." << endl;
-  e2->code(s, env);
+  e2->code(s, st);
   emit_jal("Object.copy", s);
   s << endl;
 
@@ -1671,16 +1671,16 @@ void plus_class::code(ostream& s, Environment env) {
   s << endl;
 }
 
-void sub_class::code(ostream& s, Environment env) {
+void sub_class::code(ostream& s, State st) {
   s << "\t# int operation: sub" << endl;
   s << "\t# eval e1 and push." << endl;
-  e1->code(s, env);
+  e1->code(s, st);
   emit_push(ACC, s);
-  env.AddObstacle();
+  st.AddObstacle();
   s << endl;
 
   s << "\t# eval e2 and make a copy for result." << endl;
-  e2->code(s, env);
+  e2->code(s, st);
   emit_jal("Object.copy", s);
   s << endl;
 
@@ -1701,16 +1701,16 @@ void sub_class::code(ostream& s, Environment env) {
   s << endl;
 }
 
-void mul_class::code(ostream& s, Environment env) {
+void mul_class::code(ostream& s, State st) {
   s << "\t# int operation: mul" << endl;
   s << "\t# eval e1 and push." << endl;
-  e1->code(s, env);
+  e1->code(s, st);
   emit_push(ACC, s);
-  env.AddObstacle();
+  st.AddObstacle();
   s << endl;
 
   s << "\t# eval e2 and make a copy for result." << endl;
-  e2->code(s, env);
+  e2->code(s, st);
   emit_jal("Object.copy", s);
   s << endl;
 
@@ -1731,16 +1731,16 @@ void mul_class::code(ostream& s, Environment env) {
   s << endl;
 }
 
-void divide_class::code(ostream& s, Environment env) {
+void divide_class::code(ostream& s, State st) {
   s << "\t# int operation: div" << endl;
   s << "\t# eval e1 and push." << endl;
-  e1->code(s, env);
+  e1->code(s, st);
   emit_push(ACC, s);
-  env.AddObstacle();
+  st.AddObstacle();
   s << endl;
 
   s << "\t# eval e2 and make a copy for result." << endl;
-  e2->code(s, env);
+  e2->code(s, st);
   emit_jal("Object.copy", s);
   s << endl;
 
@@ -1761,10 +1761,10 @@ void divide_class::code(ostream& s, Environment env) {
   s << endl;
 }
 
-void neg_class::code(ostream& s, Environment env) {
+void neg_class::code(ostream& s, State st) {
   s << "\t# neg" << endl;
   s << "\t# eval e1 and make a copy for result" << endl;
-  e1->code(s, env);
+  e1->code(s, st);
   emit_jal("Object.copy", s);
   s << endl;
 
@@ -1774,17 +1774,17 @@ void neg_class::code(ostream& s, Environment env) {
   s << endl;
 }
 
-void lt_class::code(ostream& s, Environment env) {
+void lt_class::code(ostream& s, State st) {
   s << "\t# int operation: less than" << endl;
   s << "\t# eval e1 and push." << endl;
 
-  e1->code(s, env);
+  e1->code(s, st);
   emit_push(ACC, s);
-  env.AddObstacle();
+  st.AddObstacle();
   s << endl;
 
   s << "\t# eval e2." << endl;
-  e2->code(s, env);
+  e2->code(s, st);
   s << endl;
 
   s << "\t# pop e1 to t1, move e2 to t2" << endl;
@@ -1809,16 +1809,16 @@ void lt_class::code(ostream& s, Environment env) {
   ++label_num;
 }
 
-void eq_class::code(ostream& s, Environment env) {
+void eq_class::code(ostream& s, State st) {
   s << "\t# equal" << endl;
   s << "\t# eval e1 and push." << endl;
-  e1->code(s, env);
+  e1->code(s, st);
   emit_push(ACC, s);
-  env.AddObstacle();
+  st.AddObstacle();
   s << endl;
 
   s << "\t# eval e2." << endl;
-  e2->code(s, env);
+  e2->code(s, st);
   s << endl;
 
   s << "\t# pop e1 to t1, move e2 to t2" << endl;
@@ -1846,16 +1846,16 @@ void eq_class::code(ostream& s, Environment env) {
   ++label_num;
 }
 
-void leq_class::code(ostream& s, Environment env) {
+void leq_class::code(ostream& s, State st) {
   s << "\t# int operation: less or equal" << endl;
   s << "\t# eval e1 and push." << endl;
-  e1->code(s, env);
+  e1->code(s, st);
   emit_push(ACC, s);
-  env.AddObstacle();
+  st.AddObstacle();
   s << endl;
 
   s << "\t# eval e2." << endl;
-  e2->code(s, env);
+  e2->code(s, st);
   s << endl;
 
   s << "\t# pop e1 to t1, move e2 to t2" << endl;
@@ -1880,10 +1880,10 @@ void leq_class::code(ostream& s, Environment env) {
   ++label_num;
 }
 
-void comp_class::code(ostream& s, Environment env) {
+void comp_class::code(ostream& s, State st) {
   s << "\t# the 'not' operator" << endl;
   s << "\t# first eval the bool" << endl;
-  e1->code(s, env);
+  e1->code(s, st);
 
   s << "\t# get int from bool" << endl;
   emit_load(T1, 3, ACC, s);
@@ -1903,19 +1903,19 @@ void comp_class::code(ostream& s, Environment env) {
   ++label_num;
 }
 
-void int_const_class::code(ostream& s, Environment env) {
+void int_const_class::code(ostream& s, State st) {
   emit_load_int(ACC, inttable.lookup_string(token->get_string()), s);
 }
 
-void string_const_class::code(ostream& s, Environment env) {
+void string_const_class::code(ostream& s, State st) {
   emit_load_string(ACC, stringtable.lookup_string(token->get_string()), s);
 }
 
-void bool_const_class::code(ostream& s, Environment env) {
+void bool_const_class::code(ostream& s, State st) {
   emit_load_bool(ACC, BoolConst(val), s);
 }
 
-void new__class::code(ostream& s, Environment env) {
+void new__class::code(ostream& s, State st) {
   if (type_name == SELF_TYPE) {
     emit_load_address(T1, "class_objTab", s);
 
@@ -1968,8 +1968,8 @@ void new__class::code(ostream& s, Environment env) {
   emit_jal(dest.c_str(), s);
 }
 
-void isvoid_class::code(ostream& s, Environment env) {
-  e1->code(s, env);
+void isvoid_class::code(ostream& s, State st) {
+  e1->code(s, st);
 
   s << "\t# t1 = acc" << endl;
   emit_move(T1, ACC, s);
@@ -1990,15 +1990,15 @@ void isvoid_class::code(ostream& s, Environment env) {
   ++label_num;
 }
 
-void no_expr_class::code(ostream& s, Environment env) {
+void no_expr_class::code(ostream& s, State st) {
   emit_move(ACC, ZERO, s);
 }
 
-void object_class::code(ostream& s, Environment env) {
+void object_class::code(ostream& s, State st) {
   s << "\t# object:" << endl;
   int idx;
 
-  if ((idx = env.LookUpVar(name)) != -1) {
+  if ((idx = st.LookUpVar(name)) != -1) {
     s << "\t# it's a let variable." << endl;
     
     emit_load(ACC, idx + 1, SP, s);
@@ -2007,7 +2007,7 @@ void object_class::code(ostream& s, Environment env) {
       emit_addiu(A1, SP, 4 * (idx + 1), s);
       emit_jal("_GenGC_Assign", s);
     }
-  } else if ((idx = env.LookUpParam(name)) != -1) {
+  } else if ((idx = st.LookUpParam(name)) != -1) {
     s << "\t# it's a param." << endl;
     
     emit_load(ACC, idx + 3, FP, s);
@@ -2016,7 +2016,7 @@ void object_class::code(ostream& s, Environment env) {
       emit_addiu(A1, FP, 4 * (idx + 3), s);
       emit_jal("_GenGC_Assign", s);
     }
-  } else if ((idx = env.LookUpAttrib(name)) != -1) {
+  } else if ((idx = st.LookUpAttrib(name)) != -1) {
     s << "\t# it's an attribute." << endl;
     
     emit_load(ACC, idx + 3, SELF, s);
