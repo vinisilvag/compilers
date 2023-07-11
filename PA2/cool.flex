@@ -50,19 +50,11 @@ extern YYSTYPE cool_yylval;
  *  Add Your own definitions here
  */
 
-/*
- *  Variaveis auxiliares
- */
-
 int commentLevel = 0;
 std::string readString = "";
 int readNullToken = 0;
 
 %}
-
-/*
- *  Definicoes regulares
- */
 
 CLASS           (?i:class)
 IF              (?i:if)
@@ -100,19 +92,11 @@ IDSUFFIX        [0-9a-zA-Z_]
 TYPEID          [A-Z]{IDSUFFIX}*
 OBJECTID        [a-z]{IDSUFFIX}*
 
-/*
- *  Regras ativadas de maneira condicional
- */
-
 %START MULTILINE_COMMENT
 %START SINGLELINE_COMMENT
 %START STRING
 
 %%
-
- /*
-  *  Comentarios da forma (* ... *)
-  */
 
 <INITIAL,MULTILINE_COMMENT,SINGLELINE_COMMENT>"(*" {
   commentLevel += 1;
@@ -140,10 +124,6 @@ OBJECTID        [a-z]{IDSUFFIX}*
   return (ERROR);
 }
 
- /*
-  *  Comentarios inline (iniciados por "--")
-  */
-
 <INITIAL>"--" {
   BEGIN SINGLELINE_COMMENT;
 }
@@ -154,10 +134,6 @@ OBJECTID        [a-z]{IDSUFFIX}*
     curr_lineno += 1;
     BEGIN INITIAL;
 }
-
- /*
-  *  Strings
-  */
 
 <INITIAL>\" {
   readString = "";
@@ -234,10 +210,6 @@ OBJECTID        [a-z]{IDSUFFIX}*
   return (ERROR);
 }
 
- /*
-  *  Palavras-chave
-  */
-
 {CLASS}		      { return (CLASS); }
 {IF}		        { return (IF); }
 {THEN}		      { return (THEN); }
@@ -256,17 +228,9 @@ OBJECTID        [a-z]{IDSUFFIX}*
 {OF}		        { return (OF); }
 {NOT}		        { return (NOT); }
 
- /*
-  * Simbolos que possuem mais de dois caracteres
-  */
-
 "=>"            { return (DARROW); }
 "<-"            { return (ASSIGN); }
 "<="            { return (LE); }
-
- /*
-  *  Simbolos, operadores, booleanos, literais e identificadores de tipo e objetos (variaveis, funcoes, etc)
-  */
 
 {SYMBOLS}       { return yytext[0]; }
 
@@ -282,23 +246,10 @@ OBJECTID        [a-z]{IDSUFFIX}*
 {TYPEID}        { yylval.symbol = idtable.add_string(yytext); return (TYPEID); }
 {OBJECTID}      { yylval.symbol = idtable.add_string(yytext); return (OBJECTID); }
 
-
- /*
-  *  Quebra de linha e espacos em branco (e suas variacoes)
-  */
-
 \n              { curr_lineno += 1; }
 {WHITESPACE}+   {  }
 
- /*
-  *  Caracteres invalidos da linguagem
-  */
-
 {INVALIDS}      { yylval.error_msg = yytext; return (ERROR); }
-
- /*
-  *  Caso nenhuma regra seja aplicavel, cai na regra de ERRO
-  */
 
 .               { yylval.error_msg = yytext; return (ERROR); }
 
