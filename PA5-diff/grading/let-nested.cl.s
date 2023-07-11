@@ -546,59 +546,37 @@ Main.print:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# dispatch
-	# eval and save the params.
-	# object:
-	# it's a param.
 	lw	$a0 12($fp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label0
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label0:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 16($t1)
 
-	# jump to out_int
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label1
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label1:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
 
@@ -628,17 +606,10 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# let expr
-	# eval init
 	la	$a0 int_const0
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# let expr
-	# eval init
-	# neg
-	# eval e1 and make a copy for result
 	la	$a0 int_const1
 	jal	Object.copy
 
@@ -646,119 +617,74 @@ Main.main:
 	neg	$t1 $t1
 	sw	$t1 12($a0)
 
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# let expr
-	# eval init
 	move	$a0 $zero
 	la	$a0 bool_const0
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# if statement
-	# eval condition.
-	# the 'not' operator
-	# first eval the bool
-	# object:
-	# it's a let variable.
 	lw	$a0 4($sp)
 
-	# get int from bool
 	lw	$t1 12($a0)
-	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# if acc = false, jump to finish
 	beq	$t1 $zero label2
-	# load false
 	la	$a0 bool_const0
-	# finish:
 label2:
-	# extract the bool content from acc to t1
 	lw	$t1 12($a0)
 
-	# if t1 == 0 goto false
 	beq	$t1 $zero label3
 
-	# let expr
-	# eval init
 	move	$a0 $zero
 	la	$a0 int_const2
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# dispatch
-	# eval and save the params.
-	# int operation: add
-	# eval e1 and push.
-	# object:
-	# it's a let variable.
 	lw	$a0 4($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
 	la	$a0 int_const1
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label5
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label5:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jump to print
 	jalr		$t1
 
-	# pop
 	addiu	$sp $sp 4
 
-	# jump to finish
 	b	label4
 
-# False:
 label3:
 	la	$a0 int_const0
-# Finish:
 label4:
-	# pop
 	addiu	$sp $sp 4
 
-	# pop
 	addiu	$sp $sp 4
 
-	# pop
 	addiu	$sp $sp 4
 
 

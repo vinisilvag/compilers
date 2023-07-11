@@ -509,27 +509,17 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label0
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label0:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jump to abort
 	jalr		$t1
 
 	la	$a0 int_const0

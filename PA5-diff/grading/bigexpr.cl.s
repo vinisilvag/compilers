@@ -541,254 +541,174 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# let expr
-	# eval init
 	la	$a0 int_const0
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# dispatch
-	# eval and save the params.
-	# int operation: add
-	# eval e1 and push.
-	# assign
-	# eval the expr.
 	la	$a0 int_const1
-	# find the lvalue.
-	# its' a let variable.
 	sw	$a0 4($sp)
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# int operation: add
-	# eval e1 and push.
-	# assign
-	# eval the expr.
-	# int operation: add
-	# eval e1 and push.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
 	la	$a0 int_const1
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
-	# find the lvalue.
-	# its' a let variable.
 	sw	$a0 8($sp)
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# int operation: add
-	# eval e1 and push.
 	la	$a0 int_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# int operation: add
-	# eval e1 and push.
 	la	$a0 int_const3
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# int operation: add
-	# eval e1 and push.
 	la	$a0 int_const0
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# int operation: add
-	# eval e1 and push.
 	la	$a0 int_const4
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# int operation: add
-	# eval e1 and push.
 	la	$a0 int_const5
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# int operation: add
-	# eval e1 and push.
-	# object:
-	# it's a let variable.
 	lw	$a0 32($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
 	la	$a0 int_const4
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label0
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label0:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 16($t1)
 
-	# jump to out_int
 	jalr		$t1
 
-	# pop
 	addiu	$sp $sp 4
 
 

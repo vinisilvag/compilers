@@ -685,51 +685,34 @@ Foo_init:
 	jal	Bazz_init
 
 	# init attrib a
-	# case expr
-	# eval e0
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if e0 = void, abort
 	bne	$a0 $zero label0
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_case_abort2
 label0:
-	# t1 = type(acc)
 	lw	$t1 0($a0)
-	# tag = 7 : goto case 0
 	li	$t2 7
 	beq	$t1 $t2 label1
 
-	# tag = 5 : goto case 1
 	li	$t2 5
 	beq	$t1 $t2 label2
 
-	# tag = 6 : goto case 2
 	li	$t2 6
 	beq	$t1 $t2 label3
 
-	# ----------------
-	# tag = 6 : goto case 0
 	li	$t2 6
 	beq	$t1 $t2 label1
 
-	# tag = 7 : goto case 1
 	li	$t2 7
 	beq	$t1 $t2 label2
 
-	# ----------------
-	# tag = 6 : goto case 1
 	li	$t2 6
 	beq	$t1 $t2 label2
 
-	# ----------------
-	# no match
 	jal	_case_abort
 	b	label4
-# eval expr 0
 label1:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
@@ -737,9 +720,7 @@ label1:
 	jal	Object.copy
 	jal	Bar_init
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label4
-# eval expr 1
 label2:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
@@ -747,177 +728,113 @@ label2:
 	jal	Object.copy
 	jal	Razz_init
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label4
-# eval expr 2
 label3:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# object:
-	# it's a let variable.
 	lw	$a0 4($sp)
 
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label4
-#finish:
 label4:
 
 	sw	$a0 24($s0)
 
 	# init attrib b
-	# int operation: add
-	# eval e1 and push.
-	# int operation: add
-	# eval e1 and push.
-	# int operation: add
-	# eval e1 and push.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's an attribute.
 	lw	$a0 24($s0)
 
-	# if obj = void: abort
 	bne	$a0 $zero label5
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label5:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jump to doh
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's an attribute.
 	lw	$a0 16($s0)
 
-	# if obj = void: abort
 	bne	$a0 $zero label6
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label6:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jump to doh
 	jalr		$t1
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label7
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label7:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jump to doh
 	jalr		$t1
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label8
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label8:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jump to printh
 	jalr		$t1
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
@@ -952,53 +869,33 @@ Bar_init:
 	jal	Razz_init
 
 	# init attrib c
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label9
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label9:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jump to doh
 	jalr		$t1
 
 	sw	$a0 40($s0)
 
 	# init attrib d
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label10
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label10:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jump to printh
 	jalr		$t1
 
 	sw	$a0 44($s0)
@@ -1032,38 +929,25 @@ Razz_init:
 	jal	Foo_init
 
 	# init attrib e
-	# case expr
-	# eval e0
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if e0 = void, abort
 	bne	$a0 $zero label11
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_case_abort2
 label11:
-	# t1 = type(acc)
 	lw	$t1 0($a0)
-	# tag = 7 : goto case 0
 	li	$t2 7
 	beq	$t1 $t2 label12
 
-	# tag = 6 : goto case 1
 	li	$t2 6
 	beq	$t1 $t2 label13
 
-	# ----------------
-	# tag = 6 : goto case 0
 	li	$t2 6
 	beq	$t1 $t2 label12
 
-	# ----------------
-	# no match
 	jal	_case_abort
 	b	label14
-# eval expr 0
 label12:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
@@ -1071,221 +955,141 @@ label12:
 	jal	Object.copy
 	jal	Bar_init
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label14
-# eval expr 1
 label13:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# object:
-	# it's a let variable.
 	lw	$a0 4($sp)
 
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label14
-#finish:
 label14:
 
 	sw	$a0 32($s0)
 
 	# init attrib f
-	# int operation: add
-	# eval e1 and push.
-	# int operation: add
-	# eval e1 and push.
-	# int operation: add
-	# eval e1 and push.
-	# int operation: add
-	# eval e1 and push.
-	# static dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's an attribute.
 	lw	$a0 24($s0)
 
-	# if obj = void: abort
 	bne	$a0 $zero label15
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label15:
-	# locate the method in the dispatch table.
-	# t1 = Bazz.dispTab
 	la	$t1 Bazz_dispTab
 
-	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jump to doh
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's an attribute.
 	lw	$a0 16($s0)
 
-	# if obj = void: abort
 	bne	$a0 $zero label16
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label16:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jump to doh
 	jalr		$t1
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's an attribute.
 	lw	$a0 32($s0)
 
-	# if obj = void: abort
 	bne	$a0 $zero label17
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label17:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jump to doh
 	jalr		$t1
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label18
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label18:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jump to doh
 	jalr		$t1
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label19
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label19:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jump to printh
 	jalr		$t1
 
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
@@ -1324,68 +1128,46 @@ Bazz_init:
 	sw	$a0 12($s0)
 
 	# init attrib g
-	# case expr
-	# eval e0
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if e0 = void, abort
 	bne	$a0 $zero label20
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_case_abort2
 label20:
-	# t1 = type(acc)
 	lw	$t1 0($a0)
-	# tag = 8 : goto case 0
 	li	$t2 8
 	beq	$t1 $t2 label21
 
-	# tag = 7 : goto case 1
 	li	$t2 7
 	beq	$t1 $t2 label22
 
-	# tag = 5 : goto case 2
 	li	$t2 5
 	beq	$t1 $t2 label23
 
-	# tag = 6 : goto case 3
 	li	$t2 6
 	beq	$t1 $t2 label24
 
-	# ----------------
-	# tag = 5 : goto case 0
 	li	$t2 5
 	beq	$t1 $t2 label21
 
-	# tag = 6 : goto case 1
 	li	$t2 6
 	beq	$t1 $t2 label22
 
-	# tag = 7 : goto case 2
 	li	$t2 7
 	beq	$t1 $t2 label23
 
-	# ----------------
-	# tag = 7 : goto case 0
 	li	$t2 7
 	beq	$t1 $t2 label21
 
-	# tag = 6 : goto case 2
 	li	$t2 6
 	beq	$t1 $t2 label23
 
-	# ----------------
-	# tag = 6 : goto case 0
 	li	$t2 6
 	beq	$t1 $t2 label21
 
-	# ----------------
-	# no match
 	jal	_case_abort
 	b	label25
-# eval expr 0
 label21:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
@@ -1393,9 +1175,7 @@ label21:
 	jal	Object.copy
 	jal	Foo_init
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label25
-# eval expr 1
 label22:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
@@ -1403,9 +1183,7 @@ label22:
 	jal	Object.copy
 	jal	Bar_init
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label25
-# eval expr 2
 label23:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
@@ -1413,46 +1191,30 @@ label23:
 	jal	Object.copy
 	jal	Razz_init
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label25
-# eval expr 3
 label24:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# object:
-	# it's a let variable.
 	lw	$a0 4($sp)
 
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label25
-#finish:
 label25:
 
 	sw	$a0 16($s0)
 
 	# init attrib i
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label26
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label26:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jump to printh
 	jalr		$t1
 
 	sw	$a0 20($s0)
@@ -1535,52 +1297,32 @@ Foo.doh:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# let expr
-	# eval init
-	# object:
-	# it's an attribute.
-	lw	$a0 12($s0)
-
-	# push
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
-
-	# assign
-	# eval the expr.
-	# int operation: add
-	# eval e1 and push.
-	# object:
-	# it's an attribute.
 	lw	$a0 12($s0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
+	lw	$a0 12($s0)
+
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+
 	la	$a0 int_const0
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
-	# find the lvalue.
-	# it's an attribute.
 	sw	$a0 12($s0)
-	# object:
-	# it's a let variable.
 	lw	$a0 4($sp)
 
-	# pop
 	addiu	$sp $sp 4
 
 
@@ -1610,33 +1352,21 @@ Bazz.printh:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# dispatch
-	# eval and save the params.
-	# object:
-	# it's an attribute.
 	lw	$a0 12($s0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label27
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label27:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 16($t1)
 
-	# jump to out_int
 	jalr		$t1
 
 	la	$a0 int_const2
@@ -1667,52 +1397,32 @@ Bazz.doh:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# let expr
-	# eval init
-	# object:
-	# it's an attribute.
-	lw	$a0 12($s0)
-
-	# push
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
-
-	# assign
-	# eval the expr.
-	# int operation: add
-	# eval e1 and push.
-	# object:
-	# it's an attribute.
 	lw	$a0 12($s0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
+	lw	$a0 12($s0)
+
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+
 	la	$a0 int_const1
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
-	# find the lvalue.
-	# it's an attribute.
 	sw	$a0 12($s0)
-	# object:
-	# it's a let variable.
 	lw	$a0 4($sp)
 
-	# pop
 	addiu	$sp $sp 4
 
 

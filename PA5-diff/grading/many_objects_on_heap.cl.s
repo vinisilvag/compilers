@@ -544,16 +544,7 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# while loop
-	# start:
 label0:
-	# acc = pred
-	# int operation: less than
-	# eval e1 and push.
-	# neg
-	# eval e1 and make a copy for result
-	# object:
-	# it's an attribute.
 	lw	$a0 16($s0)
 
 	jal	Object.copy
@@ -565,118 +556,74 @@ label0:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2.
 	la	$a0 int_const1
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# pretend that t1 < t2
 	la	$a0 bool_const1
-	# if t1 < t2 jump to finish
 	blt	$t1 $t2 label2
 	la	$a0 bool_const0
 label2:
-	# get int from bool
 	lw	$t1 12($a0)
 
-	# if pred == false jump to finish
 	beq	$t1 $zero label1
 
-	# assign
-	# eval the expr.
 	la	$a0 Int_protObj
 	jal	Object.copy
 	jal	Int_init
-	# find the lvalue.
-	# it's an attribute.
 	sw	$a0 12($s0)
-	# let expr
-	# eval init
 	la	$a0 IO_protObj
 	jal	Object.copy
 	jal	IO_init
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# object:
-	# it's a let variable.
 	lw	$a0 4($sp)
 
-	# pop
 	addiu	$sp $sp 4
 
-	# assign
-	# eval the expr.
-	# int operation: sub
-	# eval e1 and push.
-	# object:
-	# it's an attribute.
 	lw	$a0 16($s0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2 and make a copy for result.
 	la	$a0 int_const2
 	jal	Object.copy
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# modify the int inside t2.
 	sub	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
-	# find the lvalue.
-	# it's an attribute.
 	sw	$a0 16($s0)
-	# jump to start
 	b	label0
-	# finish:
 label1:
-	# acc = void
 	move	$a0 $zero
-	# dispatch
-	# eval and save the params.
-	# object:
-	# it's an attribute.
 	lw	$a0 16($s0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label3
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label3:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 16($t1)
 
-	# jump to out_int
 	jalr		$t1
 
 

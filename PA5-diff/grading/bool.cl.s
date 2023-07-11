@@ -551,677 +551,397 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# let expr
-	# eval init
 	la	$a0 bool_const1
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# let expr
-	# eval init
 	la	$a0 bool_const0
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# let expr
-	# eval init
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# let expr
-	# eval init
 	la	$a0 bool_const1
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# let expr
-	# eval init
-	# object:
-	# it's a let variable.
 	lw	$a0 12($sp)
 
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# let expr
-	# eval init
 	la	$a0 bool_const0
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# let expr
-	# eval init
 	move	$a0 $zero
 	la	$a0 bool_const0
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# let expr
-	# eval init
 	move	$a0 $zero
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# let expr
-	# eval init
 	la	$a0 IO_protObj
 	jal	Object.copy
 	jal	IO_init
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label0
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label0:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 36($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label1
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label1:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 4($t1)
 
-	# jump to type_name
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label2
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label2:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label3
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label3:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# assign
-	# eval the expr.
-	# object:
-	# it's a let variable.
 	lw	$a0 36($sp)
 
-	# find the lvalue.
-	# its' a let variable.
 	sw	$a0 12($sp)
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const3
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label4
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label4:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 12($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label5
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label5:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 4($t1)
 
-	# jump to type_name
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label6
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label6:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label7
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label7:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# assign
-	# eval the expr.
-	# object:
-	# it's a let variable.
 	lw	$a0 28($sp)
 
-	# find the lvalue.
-	# its' a let variable.
 	sw	$a0 8($sp)
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const4
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label8
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label8:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label9
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label9:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 4($t1)
 
-	# jump to type_name
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label10
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label10:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label11
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label11:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# assign
-	# eval the expr.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 32($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label12
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label12:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 8($t1)
 
-	# jump to copy
 	jalr		$t1
 
-	# find the lvalue.
-	# its' a let variable.
 	sw	$a0 12($sp)
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const3
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label13
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label13:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 12($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label14
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label14:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 4($t1)
 
-	# jump to type_name
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label15
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label15:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label16
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label16:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# assign
-	# eval the expr.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 16($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label17
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label17:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 8($t1)
 
-	# jump to copy
 	jalr		$t1
 
-	# find the lvalue.
-	# its' a let variable.
 	sw	$a0 8($sp)
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const4
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label18
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label18:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label19
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label19:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 4($t1)
 
-	# jump to type_name
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label20
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label20:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# if obj = void: abort
 	bne	$a0 $zero label21
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label21:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
-	# pop
 	addiu	$sp $sp 4
 
-	# pop
 	addiu	$sp $sp 4
 
-	# pop
 	addiu	$sp $sp 4
 
-	# pop
 	addiu	$sp $sp 4
 
-	# pop
 	addiu	$sp $sp 4
 
-	# pop
 	addiu	$sp $sp 4
 
-	# pop
 	addiu	$sp $sp 4
 
-	# pop
 	addiu	$sp $sp 4
 
-	# pop
 	addiu	$sp $sp 4
 
 

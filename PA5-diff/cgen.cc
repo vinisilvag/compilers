@@ -1296,16 +1296,14 @@ CgenNode::CgenNode(Class_ nd, Basicness bstatus, CgenClassTableP ct) :
 //*****************************************************************
 
 void assign_class::code(ostream& s, State st) {
-  s << "\t# assign" << endl;
-  s << "\t# eval the expr." << endl;
+  // avalia a expressao
   expr->code(s, st);
 
-  s << "\t# find the lvalue." << endl;
+  // procurap pelo valor
   int idx;
 
   if ((idx = st.LookUpVar(name)) != -1) {
-    s << "\t# its' a let variable." << endl;
-    
+    // variavel let
     emit_store(ACC, idx + 1, SP, s);
     
     if (cgen_Memmgr == 1) {
@@ -1313,8 +1311,7 @@ void assign_class::code(ostream& s, State st) {
       emit_jal("_GenGC_Assign", s);
     }
   } else if ((idx = st.LookUpParam(name)) != -1){
-    s << "\t# it's a param." << endl;
-    
+    // parametro
     emit_store(ACC, idx + 3, FP, s);
     
     if (cgen_Memmgr == 1) {
@@ -1323,8 +1320,7 @@ void assign_class::code(ostream& s, State st) {
     }
   }
   else if ((idx = st.LookUpAttrib(name)) != -1) {
-    s << "\t# it's an attribute." << endl;
-
+    // atributo
     emit_store(ACC, idx + 3, SELF, s);
     
     if (cgen_Memmgr == 1) {
@@ -1337,9 +1333,7 @@ void assign_class::code(ostream& s, State st) {
 }
 
 void static_dispatch_class::code(ostream& s, State st) {
-  s << "\t# static dispatch" << endl;
-  s << "\t# eval and save the params." << endl;
-
+  // avalia e salva os parametros
   std::vector<Expression> actuals = GetActuals();
   State new_st = st;
 
@@ -1350,10 +1344,10 @@ void static_dispatch_class::code(ostream& s, State st) {
     st.AddObstacle();
   }
 
-  s << "\t# eval the obj in dispatch." << endl;
+  // avalia o objeto de dispatch
   expr->code(s, st);
 
-  s << "\t# if obj = void: abort" << endl;
+  // se o objeto eh void, entao aborta
   emit_bne(ACC, ZERO, label_num, s);
   s << LA << ACC << " str_const0" << endl;
   emit_load_imm(T1, 1, s);
@@ -1364,9 +1358,8 @@ void static_dispatch_class::code(ostream& s, State st) {
 
   Symbol _class_name = type_name;
   CgenNode* _class_node = cgen_classtable->GetClassNode(type_name);
-  s << "\t# locate the method in the dispatch table." << endl;
-  s << "\t# t1 = " << type_name << ".dispTab" << endl;
-
+  
+  // procura o metodo na dispatch table
   std::string addr = type_name->get_string();
   addr += DISPTAB_SUFFIX;
   emit_load_address(T1, addr.c_str(), s);
@@ -1374,18 +1367,16 @@ void static_dispatch_class::code(ostream& s, State st) {
   s << endl;
 
   int idx = _class_node->GetDispatchIdxTab()[name];
-  s << "\t# t1 = dispTab[offset]" << endl;
+  
   emit_load(T1, idx, T1, s);
   s << endl;
 
-  s << "\t# jump to " << name << endl;
   emit_jalr(T1, s);
   s << endl;
 }
 
 void dispatch_class::code(ostream& s, State st) {
-  s << "\t# dispatch" << endl;
-  s << "\t# eval and save the params." << endl;
+  // avalia e salva os parametros
   std::vector<Expression> actuals = GetActuals();
 
   for (Expression expr : actuals) {
@@ -1394,10 +1385,10 @@ void dispatch_class::code(ostream& s, State st) {
     st.AddObstacle();
   }
 
-  s << "\t# eval the obj in dispatch." << endl;
+  // avalia o objeto no dispatch
   expr->code(s, st);
 
-  s << "\t# if obj = void: abort" << endl;
+  // se o objeto eh void, entao aborta
   emit_bne(ACC, ZERO, label_num, s);
   s << LA << ACC << " str_const0" << endl;
   emit_load_imm(T1, 1, s);
@@ -1406,7 +1397,7 @@ void dispatch_class::code(ostream& s, State st) {
   emit_label_def(label_num, s);
   ++label_num;
 
-  // Get current class name;
+  // acessa o nome da classe atual
   Symbol _class_name = st.m_class_node->name;
 
   if (expr->get_type() != SELF_TYPE) {
@@ -1414,49 +1405,46 @@ void dispatch_class::code(ostream& s, State st) {
   }
 
   CgenNode* _class_node = cgen_classtable->GetClassNode(_class_name);
-  s << "\t# locate the method in the dispatch table." << endl;
-  s << "\t# t1 = self.dispTab" << endl;
+  
+  // procura o metodo na dispatch table
   emit_load(T1, 2, ACC, s);
   s << endl;
 
   int idx = _class_node->GetDispatchIdxTab()[name];
-  s << "\t# t1 = dispTab[offset]" << endl;
+
   emit_load(T1, idx, T1, s);
   s << endl;
 
-  s << "\t# jump to " << name << endl;
   emit_jalr(T1, s);
   s << endl;
 }
 
 void cond_class::code(ostream& s, State st) {
-  s << "\t# if statement" << endl;
-  s << "\t# eval condition." << endl;
+  // avalia a condicao
   pred->code(s, st);
 
-  s << "\t# extract the bool content from acc to t1" << endl;
+  // extrai o booleano do acumulador para t1
   emit_fetch_int(T1, ACC, s);
   s << endl;
 
   int label_num_false = label_num++;
   int label_num_finish = label_num++;
 
-  s << "\t# if t1 == 0 goto false" << endl;
+  // se t1 eh 0, vai para o branch false
   emit_beq(T1, ZERO, label_num_false, s);
   s << endl;
 
   then_exp->code(s, st);
 
-  s << "\t# jump to finish" << endl;
   emit_branch(label_num_finish, s);
   s << endl;
 
-  s << "# False:" << endl;
+  // false
   emit_label_def(label_num_false, s);
 
   else_exp->code(s, st);
 
-  s << "# Finish:" << endl;
+  // finish
   emit_label_def(label_num_finish, s);
 }
 
@@ -1465,30 +1453,28 @@ void loop_class::code(ostream& s, State st) {
   int finish = label_num + 1;
   label_num += 2;
 
-  s << "\t# while loop" << endl;
-  s << "\t# start:" << endl;
+  // inicia o loop
   emit_label_def(start, s);
 
-  s << "\t# acc = pred" << endl;
+  // acc = pred
   pred->code(s, st);
 
-  s << "\t# get int from bool" << endl;
   emit_fetch_int(T1, ACC, s);
   s << endl;
 
-  s << "\t# if pred == false jump to finish" << endl;
+  // se pred eh false, entao goto para o final
   emit_beq(T1, ZERO, finish, s);
   s << endl;
 
   body->code(s, st);
 
-  s << "\t# jump to start" << endl;
+  // volta para o inicio
   emit_branch(start, s);
 
-  s << "\t# finish:" << endl;
+  // vai para o final
   emit_label_def(finish, s);
   
-  s << "\t# acc = void" << endl;
+  // acc = void
   emit_move(ACC, ZERO, s);
 }
 
@@ -1496,11 +1482,10 @@ void typcase_class::code(ostream& s, State st) {
   std::map<Symbol, int> _class_tags = cgen_classtable->GetClassTags();
   std::vector<CgenNode*> _class_nodes = cgen_classtable->GetClassNodes();
   
-  s << "\t# case expr" << endl;
-  s << "\t# eval e0" << endl;
+  // avalia e0
   expr->code(s, st);
 
-  s << "\t# if e0 = void, abort" << endl;
+  // se e0 eh void, entao aborta
   emit_bne(ACC, ZERO, label_num, s);
   emit_load_address(ACC, "str_const0", s);
   emit_load_imm(T1, 1, s);
@@ -1509,7 +1494,6 @@ void typcase_class::code(ostream& s, State st) {
   emit_label_def(label_num, s);
   ++label_num;
 
-  s << "\t# t1 = type(acc)" << endl;
   emit_load(T1, 0, ACC, s);
 
   std::vector<branch_class*> _cases = GetCases();
@@ -1521,9 +1505,9 @@ void typcase_class::code(ostream& s, State st) {
   label_num += _cases.size() + 1;
 
   auto GetChildrenTagsSet = [&](std::vector<int> __curr_tags) {
-    std::vector<int> __children_tags; // for return.
+    std::vector<int> __children_tags;
     
-    for (int __curr_tag : __curr_tags) { // find children of this class.
+    for (int __curr_tag : __curr_tags) {
       CgenNode* __curr_node = _class_nodes[__curr_tag];
       
       std::vector<CgenNode*> __children_nodes = __curr_node->GetChildren();
@@ -1564,21 +1548,18 @@ void typcase_class::code(ostream& s, State st) {
       std::vector<int> case_tags = cases_tags[caseidx];
       
       for (int case_tag : case_tags) {
-        s << "\t# tag = " << case_tag << " : goto case " << caseidx << endl;
         emit_load_imm(T2, case_tag, s);
         emit_beq(T1, T2, labelbeg + caseidx, s);
         s << endl;
       }
     }
 
-    s << "\t# ----------------" << endl;
-
     for (int i = 0; i < cases_tags.size(); ++i) {
       cases_tags[i] = GetChildrenTagsSet(cases_tags[i]);
     }
   }
 
-  s << "\t# no match" << endl;
+  // sem match no case
   emit_jal("_case_abort", s);
   emit_branch(finish, s);
   
@@ -1587,7 +1568,6 @@ void typcase_class::code(ostream& s, State st) {
     Symbol _type_decl = _case->type_decl;
     Expression _expr = _case->expr;
 
-    s << "# eval expr " << caseidx << endl;
     emit_label_def(labelbeg + caseidx, s);
     st.EnterScope();
     st.AddVar(_name);
@@ -1595,12 +1575,12 @@ void typcase_class::code(ostream& s, State st) {
     _expr->code(s, st);
     emit_addiu(SP, SP, 4, s);
 
-    s << "\t# jump to finish" << endl;
+    // vai para o final
     emit_branch(finish, s);
     ++caseidx;
   }
 
-  s << "#finish:" << endl;
+  // finish
   emit_label_def(finish, s);
   s << endl;
 }
@@ -1612,9 +1592,7 @@ void block_class::code(ostream& s, State st) {
 }
 
 void let_class::code(ostream& s, State st) {
-  s << "\t# let expr" << endl;
-  s << "\t# eval init" << endl;
-
+  // avalia o valor inicial
   init->code(s, st);
 
   if (init->IsEmpty()) {
@@ -1627,7 +1605,6 @@ void let_class::code(ostream& s, State st) {
     }
   }
 
-  s << "\t# push" << endl;
   emit_push(ACC, s);
   s << endl;
 
@@ -1636,134 +1613,116 @@ void let_class::code(ostream& s, State st) {
 
   body->code(s, st);
 
-  s << "\t# pop" << endl;
   emit_addiu(SP, SP, 4, s);
   s << endl;
 }
 
 void plus_class::code(ostream& s, State st) {
-  s << "\t# int operation: add" << endl;
-  s << "\t# eval e1 and push." << endl;
+  // avalia e1
   e1->code(s, st);
   emit_push(ACC, s);
   st.AddObstacle();
   s << endl;
 
-  s << "\t# eval e2 and make a copy for result." << endl;
+  // avalia e2 e faz uma copia para resultado
   e2->code(s, st);
   emit_jal("Object.copy", s);
   s << endl;
 
-  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# modify the int inside t2." << endl;
   emit_add(T3, T1, T2, s);
   emit_store(T3, 3, ACC, s);
   s << endl;
 }
 
 void sub_class::code(ostream& s, State st) {
-  s << "\t# int operation: sub" << endl;
-  s << "\t# eval e1 and push." << endl;
+  // avalia e1
   e1->code(s, st);
   emit_push(ACC, s);
   st.AddObstacle();
   s << endl;
 
-  s << "\t# eval e2 and make a copy for result." << endl;
+  // avalia e2 e faz uma copia para resultado
   e2->code(s, st);
   emit_jal("Object.copy", s);
   s << endl;
 
-  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# modify the int inside t2." << endl;
   emit_sub(T3, T1, T2, s);
   emit_store(T3, 3, ACC, s);
   s << endl;
 }
 
 void mul_class::code(ostream& s, State st) {
-  s << "\t# int operation: mul" << endl;
-  s << "\t# eval e1 and push." << endl;
+  // avalia e1
   e1->code(s, st);
   emit_push(ACC, s);
   st.AddObstacle();
   s << endl;
 
-  s << "\t# eval e2 and make a copy for result." << endl;
+  // avalia e2 e faz uma copia para resultado
   e2->code(s, st);
   emit_jal("Object.copy", s);
   s << endl;
 
-  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# modify the int inside t2." << endl;
   emit_mul(T3, T1, T2, s);
   emit_store(T3, 3, ACC, s);
   s << endl;
 }
 
 void divide_class::code(ostream& s, State st) {
-  s << "\t# int operation: div" << endl;
-  s << "\t# eval e1 and push." << endl;
+  // avalia e1
   e1->code(s, st);
   emit_push(ACC, s);
   st.AddObstacle();
   s << endl;
 
-  s << "\t# eval e2 and make a copy for result." << endl;
+  // avalia e2 e faz uma copia para resultado
   e2->code(s, st);
   emit_jal("Object.copy", s);
   s << endl;
 
-  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# modify the int inside t2." << endl;
   emit_div(T3, T1, T2, s);
   emit_store(T3, 3, ACC, s);
   s << endl;
 }
 
 void neg_class::code(ostream& s, State st) {
-  s << "\t# neg" << endl;
-  s << "\t# eval e1 and make a copy for result" << endl;
+  // avalia e2 e faz uma copia para resultado
   e1->code(s, st);
   emit_jal("Object.copy", s);
   s << endl;
@@ -1775,32 +1734,26 @@ void neg_class::code(ostream& s, State st) {
 }
 
 void lt_class::code(ostream& s, State st) {
-  s << "\t# int operation: less than" << endl;
-  s << "\t# eval e1 and push." << endl;
-
+  // avalia e1
   e1->code(s, st);
   emit_push(ACC, s);
   st.AddObstacle();
   s << endl;
 
-  s << "\t# eval e2." << endl;
+  // avalia e2
   e2->code(s, st);
   s << endl;
 
-  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# pretend that t1 < t2" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
-  s << "\t# if t1 < t2 jump to finish" << endl;
   emit_blt(T1, T2, label_num, s);
 
   emit_load_bool(ACC, BoolConst(0), s);
@@ -1810,18 +1763,16 @@ void lt_class::code(ostream& s, State st) {
 }
 
 void eq_class::code(ostream& s, State st) {
-  s << "\t# equal" << endl;
-  s << "\t# eval e1 and push." << endl;
+  // avalia e1
   e1->code(s, st);
   emit_push(ACC, s);
   st.AddObstacle();
   s << endl;
 
-  s << "\t# eval e2." << endl;
+  // avalia e2
   e2->code(s, st);
   s << endl;
 
-  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
@@ -1836,10 +1787,9 @@ void eq_class::code(ostream& s, State st) {
     }
   }
 
-  s << "\t# pretend that t1 = t2" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
 
-  s << "\t# compare the two pointers." << endl;
+  // compara os dois ponteiros
   emit_beq(T1, T2, label_num, s);
   emit_load_bool(ACC, BoolConst(0), s);
   emit_label_def(label_num, s);
@@ -1847,31 +1797,28 @@ void eq_class::code(ostream& s, State st) {
 }
 
 void leq_class::code(ostream& s, State st) {
-  s << "\t# int operation: less or equal" << endl;
-  s << "\t# eval e1 and push." << endl;
+  // avalia e1
   e1->code(s, st);
   emit_push(ACC, s);
   st.AddObstacle();
   s << endl;
 
-  s << "\t# eval e2." << endl;
+  // avalia e2
   e2->code(s, st);
   s << endl;
 
-  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# pretend that t1 < t2" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
-  s << "\t# if t1 < t2 jump to finish" << endl;
+  
+  // se t1 < t2, goto para o final
   emit_bleq(T1, T2, label_num, s);
 
   emit_load_bool(ACC, BoolConst(0), s);
@@ -1881,23 +1828,20 @@ void leq_class::code(ostream& s, State st) {
 }
 
 void comp_class::code(ostream& s, State st) {
-  s << "\t# the 'not' operator" << endl;
-  s << "\t# first eval the bool" << endl;
+  // avalia a booleano
   e1->code(s, st);
 
-  s << "\t# get int from bool" << endl;
   emit_load(T1, 3, ACC, s);
 
-  s << "\t# pretend acc = false, then we construct true" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
 
-  s << "\t# if acc = false, jump to finish" << endl;
+  // se acc eh false, entao goto para o final
   emit_beq(T1, ZERO, label_num, s);
 
-  s << "\t# load false" << endl;
+  // carrega false
   emit_load_bool(ACC, BoolConst(0), s);
 
-  s << "\t# finish:" << endl;
+  // final
   emit_label_def(label_num, s);
 
   ++label_num;
@@ -1919,36 +1863,34 @@ void new__class::code(ostream& s, State st) {
   if (type_name == SELF_TYPE) {
     emit_load_address(T1, "class_objTab", s);
 
-    s << "\t# find class tag." << endl;
+    // encontra a tag da classe
     emit_load(T2, 0, SELF, s);
     s << endl;
 
-    s << "\t# get protObj." << endl;
     emit_sll(T2, T2, 3, s);
     s << endl;
 
     emit_addu(T1, T1, T2, s);
 
-    s << "\t# push." << endl;
     emit_push(T1, s);
     s << endl;
 
-    s << "\t# load protObj to acc." << endl;
+    // carrega o protObj para o acumulador
     emit_load(ACC, 0, T1, s);
     s << endl;
 
     emit_jal("Object.copy", s);
 
-    s << "\t# pop protObj address." << endl;
+    // pop no endereco de protObj 
     emit_load(T1, 1, SP, s);
     emit_addiu(SP, SP, 4, s);
     s << endl;
 
-    s << "\t# get init address." << endl;
+    // pega o endereco inicial
     emit_load(T1, 1, T1, s);
     s << endl;
 
-    s << "\t# goto start." << endl;
+    // goto para start
     emit_jalr(T1, s);
     s << endl;
 
@@ -1971,20 +1913,19 @@ void new__class::code(ostream& s, State st) {
 void isvoid_class::code(ostream& s, State st) {
   e1->code(s, st);
 
-  s << "\t# t1 = acc" << endl;
+  // t1 = acc
   emit_move(T1, ACC, s);
 
-  s << "\t# first pretend t1 = void: acc = bool(1)" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
 
-  s << "\t# if t1 = void: jump to finish" << endl;
+  // se t1 eh void, goto para o final
   emit_beq(T1, ZERO, label_num, s);
   s << endl;
 
-  s << "\t# acc != void" << endl;
+  // acc != void
   emit_load_bool(ACC, BoolConst(0), s);
 
-  s << "# finish:" << endl;
+  // final
   emit_label_def(label_num, s);
 
   ++label_num;
@@ -1995,12 +1936,10 @@ void no_expr_class::code(ostream& s, State st) {
 }
 
 void object_class::code(ostream& s, State st) {
-  s << "\t# object:" << endl;
   int idx;
 
   if ((idx = st.LookUpVar(name)) != -1) {
-    s << "\t# it's a let variable." << endl;
-    
+    // variavel let
     emit_load(ACC, idx + 1, SP, s);
     
     if (cgen_Memmgr == 1) {
@@ -2008,8 +1947,7 @@ void object_class::code(ostream& s, State st) {
       emit_jal("_GenGC_Assign", s);
     }
   } else if ((idx = st.LookUpParam(name)) != -1) {
-    s << "\t# it's a param." << endl;
-    
+    // parametro
     emit_load(ACC, idx + 3, FP, s);
     
     if (cgen_Memmgr == 1) {
@@ -2017,8 +1955,7 @@ void object_class::code(ostream& s, State st) {
       emit_jal("_GenGC_Assign", s);
     }
   } else if ((idx = st.LookUpAttrib(name)) != -1) {
-    s << "\t# it's an attribute." << endl;
-    
+    // atributo
     emit_load(ACC, idx + 3, SELF, s);
     
     if (cgen_Memmgr == 1) {
@@ -2026,7 +1963,7 @@ void object_class::code(ostream& s, State st) {
       emit_jal("_GenGC_Assign", s);
     }
   } else if (name == self) {
-    s << "\t# it's self." << endl;
+    // self
     emit_move(ACC, SELF, s);
   } else {
     s << "error! object class" << endl;

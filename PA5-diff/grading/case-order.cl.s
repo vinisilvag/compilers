@@ -553,134 +553,86 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# let expr
-	# eval init
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# case expr
-	# eval e0
-	# object:
-	# it's a let variable.
 	lw	$a0 4($sp)
 
-	# if e0 = void, abort
 	bne	$a0 $zero label0
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_case_abort2
 label0:
-	# t1 = type(acc)
 	lw	$t1 0($a0)
-	# tag = 0 : goto case 0
 	li	$t2 0
 	beq	$t1 $t2 label1
 
-	# tag = 5 : goto case 1
 	li	$t2 5
 	beq	$t1 $t2 label2
 
-	# ----------------
-	# tag = 1 : goto case 0
 	li	$t2 1
 	beq	$t1 $t2 label1
 
-	# tag = 2 : goto case 0
 	li	$t2 2
 	beq	$t1 $t2 label1
 
-	# tag = 3 : goto case 0
 	li	$t2 3
 	beq	$t1 $t2 label1
 
-	# tag = 4 : goto case 0
 	li	$t2 4
 	beq	$t1 $t2 label1
 
-	# ----------------
-	# tag = 5 : goto case 0
 	li	$t2 5
 	beq	$t1 $t2 label1
 
-	# ----------------
-	# no match
 	jal	_case_abort
 	b	label3
-# eval expr 0
 label1:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label4
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label4:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label3
-# eval expr 1
 label2:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# dispatch
-	# eval and save the params.
 	la	$a0 str_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label5
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label5:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jump to out_string
 	jalr		$t1
 
 	addiu	$sp $sp 4
-	# jump to finish
 	b	label3
-#finish:
 label3:
 
-	# pop
 	addiu	$sp $sp 4
 
 

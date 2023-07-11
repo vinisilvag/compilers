@@ -536,18 +536,12 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# if statement
-	# eval condition.
-	# equal
-	# eval e1 and push.
 	la	$a0 bool_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2.
 	la	$a0 bool_const0
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
@@ -555,55 +549,34 @@ Main.main:
 	la	$a0 bool_const1
 	la	$a1 bool_const0
 	jal	equality_test
-	# extract the bool content from acc to t1
 	lw	$t1 12($a0)
 
-	# if t1 == 0 goto false
 	beq	$t1 $zero label0
 
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label2
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label2:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jump to abort
 	jalr		$t1
 
-	# jump to finish
 	b	label1
 
-# False:
 label0:
 	la	$a0 int_const1
-# Finish:
 label1:
-	# if statement
-	# eval condition.
-	# equal
-	# eval e1 and push.
 	la	$a0 bool_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2.
 	la	$a0 bool_const1
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
@@ -611,74 +584,45 @@ label1:
 	la	$a0 bool_const1
 	la	$a1 bool_const0
 	jal	equality_test
-	# extract the bool content from acc to t1
 	lw	$t1 12($a0)
 
-	# if t1 == 0 goto false
 	beq	$t1 $zero label3
 
 	la	$a0 int_const1
-	# jump to finish
 	b	label4
 
-# False:
 label3:
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label5
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label5:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jump to abort
 	jalr		$t1
 
-# Finish:
 label4:
-	# if statement
-	# eval condition.
-	# equal
-	# eval e1 and push.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2.
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
 	la	$a0 str_const1
-	# if obj = void: abort
 	bne	$a0 $zero label6
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label6:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 8($t1)
 
-	# jump to copy
 	jalr		$t1
 
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
@@ -686,66 +630,40 @@ label6:
 	la	$a0 bool_const1
 	la	$a1 bool_const0
 	jal	equality_test
-	# extract the bool content from acc to t1
 	lw	$t1 12($a0)
 
-	# if t1 == 0 goto false
 	beq	$t1 $zero label7
 
 	la	$a0 int_const1
-	# jump to finish
 	b	label8
 
-# False:
 label7:
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label9
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label9:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jump to abort
 	jalr		$t1
 
-# Finish:
 label8:
-	# let expr
-	# eval init
 	move	$a0 $zero
 	la	$a0 str_const2
-	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# if statement
-	# eval condition.
-	# equal
-	# eval e1 and push.
-	# object:
-	# it's a let variable.
 	lw	$a0 4($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2.
 	la	$a0 str_const2
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
@@ -753,58 +671,36 @@ label8:
 	la	$a0 bool_const1
 	la	$a1 bool_const0
 	jal	equality_test
-	# extract the bool content from acc to t1
 	lw	$t1 12($a0)
 
-	# if t1 == 0 goto false
 	beq	$t1 $zero label10
 
 	la	$a0 int_const1
-	# jump to finish
 	b	label11
 
-# False:
 label10:
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label12
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label12:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jump to abort
 	jalr		$t1
 
-# Finish:
 label11:
-	# pop
 	addiu	$sp $sp 4
 
-	# if statement
-	# eval condition.
-	# equal
-	# eval e1 and push.
 	la	$a0 int_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# eval e2.
 	la	$a0 int_const3
 
-	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
@@ -812,42 +708,27 @@ label11:
 	la	$a0 bool_const1
 	la	$a1 bool_const0
 	jal	equality_test
-	# extract the bool content from acc to t1
 	lw	$t1 12($a0)
 
-	# if t1 == 0 goto false
 	beq	$t1 $zero label13
 
-	# dispatch
-	# eval and save the params.
-	# eval the obj in dispatch.
-	# object:
-	# it's self.
 	move	$a0 $s0
 
-	# if obj = void: abort
 	bne	$a0 $zero label15
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
 label15:
-	# locate the method in the dispatch table.
-	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
-	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jump to abort
 	jalr		$t1
 
-	# jump to finish
 	b	label14
 
-# False:
 label13:
 	la	$a0 int_const1
-# Finish:
 label14:
 
 	# pop fp, s0, ra
