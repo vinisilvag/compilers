@@ -26,14 +26,15 @@
 #include <algorithm>
 #include <map>
 #include <stack>
+
 #include "cgen.h"
 #include "cgen_gc.h"
 
 extern void emit_string_constant(ostream& str, char* s);
 extern int cgen_debug;
 
-int labelnum = 0;
-CgenClassTable* codegen_classtable = nullptr;
+int label_num = 0;
+CgenClassTable* cgen_classtable = nullptr;
 
 //
 // Three symbols from the semantic analyzer (semant.cc) are used.
@@ -94,8 +95,6 @@ static void initialize_constants(void) {
   length      = idtable.add_string("length");
   Main        = idtable.add_string("Main");
   main_meth   = idtable.add_string("main");
-  //   _no_class is a symbol that can't be the name of any
-  //   user-defined class.
   No_class    = idtable.add_string("_no_class");
   No_type     = idtable.add_string("_no_type");
   Object      = idtable.add_string("Object");
@@ -136,12 +135,11 @@ BoolConst truebool(TRUE);
 //*********************************************************
 
 void program_class::cgen(ostream& os) {
-  // spim wants comments to start with '#'
   os << "# start of generated code\n";
 
   initialize_constants();
-  codegen_classtable = new CgenClassTable(classes, os);
-  codegen_classtable->Execute();
+  cgen_classtable = new CgenClassTable(classes, os);
+  cgen_classtable->Execute();
 
   os << "\n# end of generated code\n";
 }
@@ -1354,16 +1352,16 @@ void static_dispatch_class::code(ostream& s, Environment env) {
   expr->code(s, env);
 
   s << "\t# if obj = void: abort" << endl;
-  emit_bne(ACC, ZERO, labelnum, s);
+  emit_bne(ACC, ZERO, label_num, s);
   s << LA << ACC << " str_const0" << endl;
   emit_load_imm(T1, 1, s);
   emit_jal("_dispatch_abort", s);
 
-  emit_label_def(labelnum, s);
-  ++labelnum;
+  emit_label_def(label_num, s);
+  ++label_num;
 
   Symbol _class_name = type_name;
-  CgenNode* _class_node = codegen_classtable->GetClassNode(type_name);
+  CgenNode* _class_node = cgen_classtable->GetClassNode(type_name);
   s << "\t# Now we locate the method in the dispatch table." << endl;
   s << "\t# t1 = " << type_name << ".dispTab" << endl;
 
@@ -1397,13 +1395,13 @@ void dispatch_class::code(ostream& s, Environment env) {
   expr->code(s, env);
 
   s << "\t# if obj = void: abort" << endl;
-  emit_bne(ACC, ZERO, labelnum, s);
+  emit_bne(ACC, ZERO, label_num, s);
   s << LA << ACC << " str_const0" << endl;
   emit_load_imm(T1, 1, s);
   emit_jal("_dispatch_abort", s);
 
-  emit_label_def(labelnum, s);
-  ++labelnum;
+  emit_label_def(label_num, s);
+  ++label_num;
 
   // Get current class name;
   Symbol _class_name = env.m_class_node->name;
@@ -1412,7 +1410,7 @@ void dispatch_class::code(ostream& s, Environment env) {
     _class_name = expr->get_type();
   }
 
-  CgenNode* _class_node = codegen_classtable->GetClassNode(_class_name);
+  CgenNode* _class_node = cgen_classtable->GetClassNode(_class_name);
   s << "\t# Now we locate the method in the dispatch table." << endl;
   s << "\t# t1 = self.dispTab" << endl;
   emit_load(T1, 2, ACC, s);
@@ -1436,32 +1434,32 @@ void cond_class::code(ostream& s, Environment env) {
   emit_fetch_int(T1, ACC, s);
   s << endl;
 
-  int labelnum_false = labelnum++;
-  int labelnum_finish = labelnum++;
+  int label_num_false = label_num++;
+  int label_num_finish = label_num++;
 
   s << "\t# if t1 == 0 goto false" << endl;
-  emit_beq(T1, ZERO, labelnum_false, s);
+  emit_beq(T1, ZERO, label_num_false, s);
   s << endl;
 
   then_exp->code(s, env);
 
   s << "\t# jumpt finish" << endl;
-  emit_branch(labelnum_finish, s);
+  emit_branch(label_num_finish, s);
   s << endl;
 
   s << "# False:" << endl;
-  emit_label_def(labelnum_false, s);
+  emit_label_def(label_num_false, s);
 
   else_exp->code(s, env);
 
   s << "# Finish:" << endl;
-  emit_label_def(labelnum_finish, s);
+  emit_label_def(label_num_finish, s);
 }
 
 void loop_class::code(ostream& s, Environment env) {
-  int start = labelnum;
-  int finish = labelnum + 1;
-  labelnum += 2;
+  int start = label_num;
+  int finish = label_num + 1;
+  label_num += 2;
 
   s << "\t# While loop" << endl;
   s << "\t# start:" << endl;
@@ -1491,32 +1489,32 @@ void loop_class::code(ostream& s, Environment env) {
 }
 
 void typcase_class::code(ostream& s, Environment env) {
-  std::map<Symbol, int> _class_tags = codegen_classtable->GetClassTags();
-  std::vector<CgenNode*> _class_nodes = codegen_classtable->GetClassNodes();
+  std::map<Symbol, int> _class_tags = cgen_classtable->GetClassTags();
+  std::vector<CgenNode*> _class_nodes = cgen_classtable->GetClassNodes();
   
   s << "\t# case expr" << endl;
   s << "\t# First eval e0" << endl;
   expr->code(s, env);
 
   s << "\t# If e0 = void, abort" << endl;
-  emit_bne(ACC, ZERO, labelnum, s);
+  emit_bne(ACC, ZERO, label_num, s);
   emit_load_address(ACC, "str_const0", s);
   emit_load_imm(T1, 1, s);
   emit_jal("_case_abort2", s);
 
-  emit_label_def(labelnum, s);
-  ++labelnum;
+  emit_label_def(label_num, s);
+  ++label_num;
 
   s << "\t# T1 = type(acc)" << endl;
   emit_load(T1, 0, ACC, s);
 
   std::vector<branch_class*> _cases = GetCases();
 
-  int labelbeg = labelnum;
-  int finish = labelnum + _cases.size();
+  int labelbeg = label_num;
+  int finish = label_num + _cases.size();
   int caseidx = 0;
   
-  labelnum += _cases.size() + 1;
+  label_num += _cases.size() + 1;
 
   auto GetChildrenTagsSet = [&](std::vector<int> __curr_tags) {
     std::vector<int> __children_tags; // for return.
@@ -1799,12 +1797,12 @@ void lt_class::code(ostream& s, Environment env) {
   s << "\t# Pretend that t1 < t2" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
   s << "\t# If t1 < t2 jumpto finish" << endl;
-  emit_blt(T1, T2, labelnum, s);
+  emit_blt(T1, T2, label_num, s);
 
   emit_load_bool(ACC, BoolConst(0), s);
-  emit_label_def(labelnum, s);
+  emit_label_def(label_num, s);
 
-  ++labelnum;
+  ++label_num;
 }
 
 void eq_class::code(ostream& s, Environment env) {
@@ -1838,10 +1836,10 @@ void eq_class::code(ostream& s, Environment env) {
   emit_load_bool(ACC, BoolConst(1), s);
 
   s << "\t# Compare the two pointers." << endl;
-  emit_beq(T1, T2, labelnum, s);
+  emit_beq(T1, T2, label_num, s);
   emit_load_bool(ACC, BoolConst(0), s);
-  emit_label_def(labelnum, s);
-  ++labelnum;
+  emit_label_def(label_num, s);
+  ++label_num;
 }
 
 void leq_class::code(ostream& s, Environment env) {
@@ -1870,12 +1868,12 @@ void leq_class::code(ostream& s, Environment env) {
   s << "\t# Pretend that t1 < t2" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
   s << "\t# If t1 < t2 jumpto finish" << endl;
-  emit_bleq(T1, T2, labelnum, s);
+  emit_bleq(T1, T2, label_num, s);
 
   emit_load_bool(ACC, BoolConst(0), s);
-  emit_label_def(labelnum, s);
+  emit_label_def(label_num, s);
 
-  ++labelnum;
+  ++label_num;
 }
 
 void comp_class::code(ostream& s, Environment env) {
@@ -1890,15 +1888,15 @@ void comp_class::code(ostream& s, Environment env) {
   emit_load_bool(ACC, BoolConst(1), s);
 
   s << "\t# If ACC = false, jumpto finish" << endl;
-  emit_beq(T1, ZERO, labelnum, s);
+  emit_beq(T1, ZERO, label_num, s);
 
   s << "\t# Load false" << endl;
   emit_load_bool(ACC, BoolConst(0), s);
 
   s << "\t# finish:" << endl;
-  emit_label_def(labelnum, s);
+  emit_label_def(label_num, s);
 
-  ++labelnum;
+  ++label_num;
 }
 
 void int_const_class::code(ostream& s, Environment env) {
@@ -1979,16 +1977,16 @@ void isvoid_class::code(ostream& s, Environment env) {
   emit_load_bool(ACC, BoolConst(1), s);
 
   s << "\t# if t1 = void: jumpto finish" << endl;
-  emit_beq(T1, ZERO, labelnum, s);
+  emit_beq(T1, ZERO, label_num, s);
   s << endl;
 
   s << "\t# acc != void" << endl;
   emit_load_bool(ACC, BoolConst(0), s);
 
   s << "# finish:" << endl;
-  emit_label_def(labelnum, s);
+  emit_label_def(label_num, s);
 
-  ++labelnum;
+  ++label_num;
 }
 
 void no_expr_class::code(ostream& s, Environment env) {
