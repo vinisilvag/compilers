@@ -226,15 +226,46 @@ de todo o projeto do gerador de código.
 
 
 Indo para a parte principal do gerador de código, precisamos, então,
-percorrer toda a árvore sintática abstrata que foi gerada no analisador
-sintático e gerar código Assembly para cada definição do programa.
-Como já passamos pela análise léxica, análise sintática e análise
-semântica, uma suposição que fazemos é que o programa definido pela
-AST é perfeitamente válido do ponto de vista das estruturas da linguagem.
-Todavia, o programa ainda pode apresentar erros, erros de lógica que foram
-inseridos pelo próprio programador na escrita do programa.
+percorrer toda a árvore sintática abstrata que foi gerada no
+analisador sintático e gerar código Assembly para cada definição do
+programa. Como já passamos pela análise léxica, análise sintática e
+análise semântica, uma suposição que fazemos é que o programa definido
+pela AST é perfeitamente válido do ponto de vista das estruturas da
+linguagem. Todavia, o programa ainda pode apresentar erros, erros de
+lógica que foram inseridos pelo próprio programador na escrita do
+programa.
 
+Como não estamos querendo otimizar o código gerado, a ideia é apenas
+percorrer a AST gerando código de máquina de pilha de cada nó presente
+na árvore. O funcionamento básico da máquina de pilha é utilizar um
+registrador como acumulador e um registrador como topo de pilha e,
+então, gerar código para as expressões e acumular os resultados no
+acumulador, usando o registrador de topo de pilha como uma forma de
+evitar acessos a memória, o que poderia deixar o processo de geração
+de código muito mais lento.
 
+A estrutura para esse processo já foi definida no arquivo cgen.cc,
+juntamente com cada nó possível na AST, para que seja possível
+percorrer e gerar código sobre eles. Como a estrutura já está definida,
+o processo se torna um pouco mais mecânico, no qual devemos preencher
+o código de cada nó com os códigos Assembly que realizam a operação.
+
+Para facilitar o acesso aos registradores, o nome de cada um deles
+foi definido como macros, tornando o acesso global em todas as
+partes do gerador de código.
+
+Além disso, no arquivo cgen.h, a classe State foi definida, sendo ela
+a responsável por armazenar informações sobre varíaveis, parâmetros,
+escopo, etc; o que irá facilitar bastante a geração de código para os
+nós da AST, no arquivo cgen.cc.
+
+No mais, assim como já dito, o restante do processo ocorreu de
+maneira mecânica, onde cada nó era construído baseado na ideia de
+como deveria ser seu funcionamento (bastante inspirado na análsie
+semântica) e, então, diversos testes eram feitos para validar se 
+o código gerado funcionava bem individualmente e, posteriormente,
+quando mais nós foram implementados, se o funcionamento do todo,
+combinado, era o esperado do programa.
 
 
 ----------------
