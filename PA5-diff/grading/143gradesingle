@@ -238,14 +238,14 @@ if ( $assignname eq "PA4") {
   }
   
 }
-if ($assignname eq "PA5") {
-  system("make -C $assigndir");
-  system("make -C $assigndir cgen");
-  if (! -x "$assigndir/cgen") {
-    printf "Couldn't build submission!\n";
-    exit 1;
-  }
-}
+#if ($assignname eq "PA5") {
+#  system("make -C $assigndir");
+#  system("make -C $assigndir cgen");
+#  if (! -x "$assigndir/cgen") {
+#    printf "Couldn't build submission!\n";
+#    exit 1;
+#  }
+#}
 if ($assignname eq "PAX1") {
   system ("make -C $assigndir");
   system("make -C $assigndir cgen");
@@ -373,7 +373,7 @@ foreach my $caseref (@cases) {
 	    if (($retval != 0)) {
 		system("mv $casefile.s $testout");
 	    } else {
-		$retval = system("/usr/class/cs143/bin/spim -file $casefile.s > $testout 2>&1");
+		$retval = system("spim -file $casefile.s > $testout 2>&1");
 		# system("rm $casefile.s");
 	    }
 	} elsif ( $assignname eq "PAX1" ) {
