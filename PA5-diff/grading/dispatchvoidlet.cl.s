@@ -551,17 +551,18 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	move	$a0 $zero
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
 	# if obj = void: abort
@@ -570,14 +571,14 @@ Main.main:
 	li	$t1 1
 	jal	_dispatch_abort
 label0:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto foo
+	# jump to foo
 	jalr		$t1
 
 	# pop

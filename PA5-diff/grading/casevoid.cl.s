@@ -512,25 +512,25 @@ Main.main:
 
 	# evaluating expression and put it to ACC
 	# case expr
-	# First eval e0
-	# Object:
-	# It is an attribute.
+	# eval e0
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 
-	# If e0 = void, abort
+	# if e0 = void, abort
 	bne	$a0 $zero label0
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_case_abort2
 label0:
-	# T1 = type(acc)
+	# t1 = type(acc)
 	lw	$t1 0($a0)
 	# tag = 5 : goto case 0
 	li	$t2 5
 	beq	$t1 $t2 label1
 
 	# ----------------
-	# No match
+	# no match
 	jal	_case_abort
 	b	label2
 # eval expr 0
@@ -539,7 +539,7 @@ label1:
 	addiu	$sp $sp -4
 	la	$a0 int_const0
 	addiu	$sp $sp 4
-	# Jumpto finish
+	# jump to finish
 	b	label2
 #finish:
 label2:

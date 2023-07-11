@@ -683,13 +683,14 @@ Base.identify:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -698,14 +699,14 @@ Base.identify:
 	li	$t1 1
 	jal	_dispatch_abort
 label0:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 
@@ -735,10 +736,11 @@ Base.duplicate:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -747,14 +749,14 @@ Base.duplicate:
 	li	$t1 1
 	jal	_dispatch_abort
 label1:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 8($t1)
 
-	# jumpto copy
+	# jump to copy
 	jalr		$t1
 
 
@@ -784,13 +786,14 @@ Derived.identify:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -799,14 +802,14 @@ Derived.identify:
 	li	$t1 1
 	jal	_dispatch_abort
 label2:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 
@@ -836,9 +839,11 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
 	la	$a0 Derived_protObj
 	jal	Object.copy
@@ -849,14 +854,14 @@ Main.main:
 	li	$t1 1
 	jal	_dispatch_abort
 label3:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto duplicate
+	# jump to duplicate
 	jalr		$t1
 
 	# if obj = void: abort
@@ -865,14 +870,14 @@ label3:
 	li	$t1 1
 	jal	_dispatch_abort
 label4:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto identify
+	# jump to identify
 	jalr		$t1
 
 

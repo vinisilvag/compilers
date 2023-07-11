@@ -547,10 +547,10 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
-	# Object:
-	# It is self.
+	# let expr
+	# eval init
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# push
@@ -558,18 +558,18 @@ Main.main:
 	addiu	$sp $sp -4
 
 	# case expr
-	# First eval e0
-	# Object:
-	# It is a let variable.
+	# eval e0
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
-	# If e0 = void, abort
+	# if e0 = void, abort
 	bne	$a0 $zero label0
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_case_abort2
 label0:
-	# T1 = type(acc)
+	# t1 = type(acc)
 	lw	$t1 0($a0)
 	# tag = 2 : goto case 0
 	li	$t2 2
@@ -580,20 +580,21 @@ label0:
 	beq	$t1 $t2 label2
 
 	# ----------------
-	# No match
+	# no match
 	jal	_case_abort
 	b	label3
 # eval expr 0
 label1:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -602,30 +603,31 @@ label1:
 	li	$t1 1
 	jal	_dispatch_abort
 label4:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 	addiu	$sp $sp 4
-	# Jumpto finish
+	# jump to finish
 	b	label3
 # eval expr 1
 label2:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -634,18 +636,18 @@ label2:
 	li	$t1 1
 	jal	_dispatch_abort
 label5:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 	addiu	$sp $sp 4
-	# Jumpto finish
+	# jump to finish
 	b	label3
 #finish:
 label3:

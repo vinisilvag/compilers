@@ -527,206 +527,206 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	la	$a0 int_const0
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	move	$a0 $zero
 	la	$a0 bool_const0
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# While loop
+	# while loop
 	# start:
 label0:
-	# ACC = pred
-	# Int operation : Less than
-	# First eval e1 and push.
-	# Object:
-	# It is a let variable.
+	# acc = pred
+	# int operation: less than
+	# eval e1 and push.
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
+	# eval e2.
 	la	$a0 int_const1
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# Extract the int inside the object.
+	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# Pretend that t1 < t2
+	# pretend that t1 < t2
 	la	$a0 bool_const1
-	# If t1 < t2 jumpto finish
+	# if t1 < t2 jump to finish
 	blt	$t1 $t2 label2
 	la	$a0 bool_const0
 label2:
-	# extract int inside bool
+	# get int from bool
 	lw	$t1 12($a0)
 
-	# if pred == false jumpto finish
+	# if pred == false jump to finish
 	beq	$t1 $zero label1
 
 	# equal
-	# First eval e1 and push.
-	# Object:
-	# It is a let variable.
+	# eval e1 and push.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
+	# eval e2.
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
-	# Object:
-	# It is a let variable.
+	# first eval the bool
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label3
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label3:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label4
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label4:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label5
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label5:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label6
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label6:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label7
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label7:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label8
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label8:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label9
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label9:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label10
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label10:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label11
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label11:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label12
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label12:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label13
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label13:
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
@@ -735,153 +735,153 @@ label13:
 	la	$a1 bool_const0
 	jal	equality_test
 	# equal
-	# First eval e1 and push.
-	# Object:
-	# It is a let variable.
+	# eval e1 and push.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
+	# eval e2.
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
-	# Object:
-	# It is a let variable.
+	# first eval the bool
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label14
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label14:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label15
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label15:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label16
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label16:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label17
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label17:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label18
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label18:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label19
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label19:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label20
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label20:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label21
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label21:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label22
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label22:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label23
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label23:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label24
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label24:
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
@@ -890,153 +890,153 @@ label24:
 	la	$a1 bool_const0
 	jal	equality_test
 	# equal
-	# First eval e1 and push.
-	# Object:
-	# It is a let variable.
+	# eval e1 and push.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
+	# eval e2.
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
-	# Object:
-	# It is a let variable.
+	# first eval the bool
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label25
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label25:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label26
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label26:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label27
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label27:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label28
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label28:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label29
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label29:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label30
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label30:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label31
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label31:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label32
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label32:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label33
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label33:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label34
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label34:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label35
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label35:
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
@@ -1045,153 +1045,153 @@ label35:
 	la	$a1 bool_const0
 	jal	equality_test
 	# equal
-	# First eval e1 and push.
-	# Object:
-	# It is a let variable.
+	# eval e1 and push.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
+	# eval e2.
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
-	# Object:
-	# It is a let variable.
+	# first eval the bool
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label36
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label36:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label37
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label37:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label38
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label38:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label39
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label39:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label40
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label40:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label41
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label41:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label42
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label42:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label43
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label43:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label44
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label44:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label45
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label45:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label46
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label46:
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
@@ -1200,153 +1200,153 @@ label46:
 	la	$a1 bool_const0
 	jal	equality_test
 	# equal
-	# First eval e1 and push.
-	# Object:
-	# It is a let variable.
+	# eval e1 and push.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
+	# eval e2.
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# the 'not' operator
-	# First eval the bool
-	# Object:
-	# It is a let variable.
+	# first eval the bool
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label47
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label47:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label48
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label48:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label49
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label49:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label50
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label50:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label51
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label51:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label52
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label52:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label53
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label53:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label54
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label54:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label55
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label55:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label56
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label56:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label57
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label57:
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
@@ -1354,45 +1354,47 @@ label57:
 	la	$a0 bool_const1
 	la	$a1 bool_const0
 	jal	equality_test
-	# Assign. First eval the expr.
-	# Int operation : Add
-	# First eval e1 and push.
-	# Object:
-	# It is a let variable.
+	# assign
+	# eval the expr.
+	# int operation: add
+	# eval e1 and push.
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2 and make a copy for result.
+	# eval e2 and make a copy for result.
 	la	$a0 int_const2
 	jal	Object.copy
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# Extract the int inside the object.
+	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# Modify the int inside t2.
+	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
-	# Now find the lvalue.
-	# It is a let variable.
+	# find the lvalue.
+	# its' a let variable.
 	sw	$a0 8($sp)
-	# Jumpto start
+	# jump to start
 	b	label0
-	# Finish:
+	# finish:
 label1:
-	# ACC = void
+	# acc = void
 	move	$a0 $zero
-	# If statement. First eval condition.
-	# Object:
-	# It is a let variable.
+	# if statement
+	# eval condition.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
 	# extract the bool content from acc to t1
@@ -1401,10 +1403,11 @@ label1:
 	# if t1 == 0 goto false
 	beq	$t1 $zero label58
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -1413,17 +1416,17 @@ label1:
 	li	$t1 1
 	jal	_dispatch_abort
 label60:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
-	# jumpt finish
+	# jump to finish
 	b	label59
 
 # False:

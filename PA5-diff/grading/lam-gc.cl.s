@@ -1949,10 +1949,11 @@ VarList.head:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -1961,14 +1962,14 @@ VarList.head:
 	li	$t1 1
 	jal	_dispatch_abort
 label0:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
 	la	$a0 Variable_protObj
@@ -2001,10 +2002,11 @@ VarList.tail:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -2013,14 +2015,14 @@ VarList.tail:
 	li	$t1 1
 	jal	_dispatch_abort
 label1:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
 	la	$a0 VarList_protObj
@@ -2053,17 +2055,18 @@ VarList.add:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	sw	$a0 0($sp)
@@ -2078,14 +2081,14 @@ VarList.add:
 	li	$t1 1
 	jal	_dispatch_abort
 label2:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto init
+	# jump to init
 	jalr		$t1
 
 
@@ -2115,13 +2118,14 @@ VarList.print:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -2130,14 +2134,14 @@ VarList.print:
 	li	$t1 1
 	jal	_dispatch_abort
 label3:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 
@@ -2195,8 +2199,8 @@ VarListNE.head:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -2228,8 +2232,8 @@ VarListNE.tail:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -2261,32 +2265,34 @@ VarListNE.init:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -2316,10 +2322,11 @@ VarListNE.print:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -2330,23 +2337,24 @@ VarListNE.print:
 	li	$t1 1
 	jal	_dispatch_abort
 label4:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const2
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -2355,20 +2363,21 @@ label4:
 	li	$t1 1
 	jal	_dispatch_abort
 label5:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -2379,18 +2388,18 @@ label5:
 	li	$t1 1
 	jal	_dispatch_abort
 label6:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto print
+	# jump to print
 	jalr		$t1
 
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -2448,10 +2457,11 @@ LambdaList.headE:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -2460,14 +2470,14 @@ LambdaList.headE:
 	li	$t1 1
 	jal	_dispatch_abort
 label7:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
 	la	$a0 VarList_protObj
@@ -2500,10 +2510,11 @@ LambdaList.headC:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -2512,14 +2523,14 @@ LambdaList.headC:
 	li	$t1 1
 	jal	_dispatch_abort
 label8:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
 	la	$a0 Lambda_protObj
@@ -2552,10 +2563,11 @@ LambdaList.headN:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -2564,14 +2576,14 @@ LambdaList.headN:
 	li	$t1 1
 	jal	_dispatch_abort
 label9:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
 	la	$a0 int_const1
@@ -2602,10 +2614,11 @@ LambdaList.tail:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -2614,14 +2627,14 @@ LambdaList.tail:
 	li	$t1 1
 	jal	_dispatch_abort
 label10:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
 	la	$a0 LambdaList_protObj
@@ -2654,33 +2667,34 @@ LambdaList.add:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 20($fp)
 	addiu	$a1 $fp 20
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	sw	$a0 0($sp)
@@ -2695,14 +2709,14 @@ LambdaList.add:
 	li	$t1 1
 	jal	_dispatch_abort
 label11:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto init
+	# jump to init
 	jalr		$t1
 
 
@@ -2760,8 +2774,8 @@ LambdaListNE.headE:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 20($s0)
 	addiu	$a1 $s0 20
 	jal	_GenGC_Assign
@@ -2793,8 +2807,8 @@ LambdaListNE.headC:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -2826,8 +2840,8 @@ LambdaListNE.headN:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -2859,8 +2873,8 @@ LambdaListNE.tail:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 24($s0)
 	addiu	$a1 $s0 24
 	jal	_GenGC_Assign
@@ -2892,56 +2906,60 @@ LambdaListNE.init:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 24($fp)
 	addiu	$a1 $fp 24
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 20($s0)
 	addiu	$a1 $s0 20
 	jal	_GenGC_Assign
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 20($fp)
 	addiu	$a1 $fp 20
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 24($s0)
 	addiu	$a1 $s0 24
 	jal	_GenGC_Assign
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -2971,10 +2989,11 @@ LambdaListRef.isNil:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -2985,14 +3004,14 @@ LambdaListRef.isNil:
 	li	$t1 1
 	jal	_dispatch_abort
 label12:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto isNil
+	# jump to isNil
 	jalr		$t1
 
 
@@ -3022,10 +3041,11 @@ LambdaListRef.headE:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -3036,14 +3056,14 @@ LambdaListRef.headE:
 	li	$t1 1
 	jal	_dispatch_abort
 label13:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 16($t1)
 
-	# jumpto headE
+	# jump to headE
 	jalr		$t1
 
 
@@ -3073,10 +3093,11 @@ LambdaListRef.headC:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -3087,14 +3108,14 @@ LambdaListRef.headC:
 	li	$t1 1
 	jal	_dispatch_abort
 label14:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 20($t1)
 
-	# jumpto headC
+	# jump to headC
 	jalr		$t1
 
 
@@ -3124,10 +3145,11 @@ LambdaListRef.headN:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -3138,14 +3160,14 @@ LambdaListRef.headN:
 	li	$t1 1
 	jal	_dispatch_abort
 label15:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 24($t1)
 
-	# jumpto headN
+	# jump to headN
 	jalr		$t1
 
 
@@ -3175,24 +3197,26 @@ LambdaListRef.reset:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Assign. First eval the expr.
+	# assign
+	# eval the expr.
 	la	$a0 int_const1
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
-	# Assign. First eval the expr.
+	# assign
+	# eval the expr.
 	la	$a0 LambdaList_protObj
 	jal	Object.copy
 	jal	LambdaList_init
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -3222,26 +3246,28 @@ LambdaListRef.add:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Assign. First eval the expr.
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -3249,8 +3275,8 @@ LambdaListRef.add:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -3261,26 +3287,27 @@ LambdaListRef.add:
 	li	$t1 1
 	jal	_dispatch_abort
 label16:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto add
+	# jump to add
 	jalr		$t1
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
-	# Assign. First eval the expr.
-	# Int operation : Add
-	# First eval e1 and push.
-	# Object:
-	# It is an attribute.
+	# assign
+	# eval the expr.
+	# int operation: add
+	# eval e1 and push.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -3288,32 +3315,32 @@ label16:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2 and make a copy for result.
+	# eval e2 and make a copy for result.
 	la	$a0 int_const0
 	jal	Object.copy
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# Extract the int inside the object.
+	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# Modify the int inside t2.
+	# modify the int inside t2.
 	add	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
-	# Int operation : Sub
-	# First eval e1 and push.
-	# Object:
-	# It is an attribute.
+	# int operation: sub
+	# eval e1 and push.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -3321,20 +3348,20 @@ label16:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2 and make a copy for result.
+	# eval e2 and make a copy for result.
 	la	$a0 int_const0
 	jal	Object.copy
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# Extract the int inside the object.
+	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# Modify the int inside t2.
+	# modify the int inside t2.
 	sub	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
@@ -3365,11 +3392,13 @@ LambdaListRef.removeHead:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Assign. First eval the expr.
-	# Dispatch. First eval and save the params.
+	# assign
+	# eval the expr.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -3380,23 +3409,23 @@ LambdaListRef.removeHead:
 	li	$t1 1
 	jal	_dispatch_abort
 label17:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto tail
+	# jump to tail
 	jalr		$t1
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -3426,13 +3455,14 @@ Expr.print_self:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const3
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -3441,20 +3471,21 @@ Expr.print_self:
 	li	$t1 1
 	jal	_dispatch_abort
 label18:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -3463,18 +3494,18 @@ label18:
 	li	$t1 1
 	jal	_dispatch_abort
 label19:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -3504,13 +3535,14 @@ Expr.beta:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const4
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -3519,20 +3551,21 @@ Expr.beta:
 	li	$t1 1
 	jal	_dispatch_abort
 label20:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -3541,18 +3574,18 @@ label20:
 	li	$t1 1
 	jal	_dispatch_abort
 label21:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -3582,13 +3615,14 @@ Expr.substitute:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const5
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -3597,20 +3631,21 @@ Expr.substitute:
 	li	$t1 1
 	jal	_dispatch_abort
 label22:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -3619,18 +3654,18 @@ label22:
 	li	$t1 1
 	jal	_dispatch_abort
 label23:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -3660,13 +3695,14 @@ Expr.gen_code:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const6
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -3675,20 +3711,21 @@ Expr.gen_code:
 	li	$t1 1
 	jal	_dispatch_abort
 label24:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -3697,18 +3734,18 @@ label24:
 	li	$t1 1
 	jal	_dispatch_abort
 label25:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -3738,20 +3775,21 @@ Variable.init:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -3781,9 +3819,10 @@ Variable.print_self:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is an attribute.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -3791,8 +3830,8 @@ Variable.print_self:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -3801,14 +3840,14 @@ Variable.print_self:
 	li	$t1 1
 	jal	_dispatch_abort
 label26:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 
@@ -3838,8 +3877,8 @@ Variable.beta:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -3869,11 +3908,12 @@ Variable.substitute:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# If statement. First eval condition.
+	# if statement
+	# eval condition.
 	# equal
-	# First eval e1 and push.
-	# Object:
-	# It is a param.
+	# eval e1 and push.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
@@ -3881,20 +3921,20 @@ Variable.substitute:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
-	# Object:
-	# It is self.
+	# eval e2.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# Pretend that t1 = t2
+	# pretend that t1 = t2
 	la	$a0 bool_const1
-	# Compare the two pointers.
+	# compare the two pointers.
 	beq	$t1 $t2 label27
 	la	$a0 bool_const0
 label27:
@@ -3904,19 +3944,19 @@ label27:
 	# if t1 == 0 goto false
 	beq	$t1 $zero label28
 
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
 
-	# jumpt finish
+	# jump to finish
 	b	label29
 
 # False:
 label28:
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 # Finish:
@@ -3948,10 +3988,10 @@ Variable.gen_code:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
-	# Object:
-	# It is a param.
+	# let expr
+	# eval init
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
@@ -3960,15 +4000,17 @@ Variable.gen_code:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# While loop
+	# while loop
 	# start:
 label30:
-	# ACC = pred
-	# If statement. First eval condition.
-	# Dispatch. First eval and save the params.
+	# acc = pred
+	# if statement
+	# eval condition.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
@@ -3979,14 +4021,14 @@ label30:
 	li	$t1 1
 	jal	_dispatch_abort
 label32:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto isNil
+	# jump to isNil
 	jalr		$t1
 
 	# extract the bool content from acc to t1
@@ -3996,19 +4038,20 @@ label32:
 	beq	$t1 $zero label33
 
 	la	$a0 bool_const0
-	# jumpt finish
+	# jump to finish
 	b	label34
 
 # False:
 label33:
 	# the 'not' operator
-	# First eval the bool
+	# first eval the bool
 	# equal
-	# First eval e1 and push.
-	# Dispatch. First eval and save the params.
+	# eval e1 and push.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
@@ -4019,61 +4062,62 @@ label33:
 	li	$t1 1
 	jal	_dispatch_abort
 label35:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto head
+	# jump to head
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
-	# Object:
-	# It is self.
+	# eval e2.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# Pretend that t1 = t2
+	# pretend that t1 = t2
 	la	$a0 bool_const1
-	# Compare the two pointers.
+	# compare the two pointers.
 	beq	$t1 $t2 label36
 	la	$a0 bool_const0
 label36:
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label37
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label37:
 # Finish:
 label34:
-	# extract int inside bool
+	# get int from bool
 	lw	$t1 12($a0)
 
-	# if pred == false jumpto finish
+	# if pred == false jump to finish
 	beq	$t1 $zero label31
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const7
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4082,21 +4126,23 @@ label34:
 	li	$t1 1
 	jal	_dispatch_abort
 label38:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Assign. First eval the expr.
-	# Dispatch. First eval and save the params.
+	# assign
+	# eval the expr.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
@@ -4107,32 +4153,34 @@ label38:
 	li	$t1 1
 	jal	_dispatch_abort
 label39:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto tail
+	# jump to tail
 	jalr		$t1
 
-	# Now find the lvalue.
-	# It is a let variable.
+	# find the lvalue.
+	# its' a let variable.
 	sw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
-	# Jumpto start
+	# jump to start
 	b	label30
-	# Finish:
+	# finish:
 label31:
-	# ACC = void
+	# acc = void
 	move	$a0 $zero
-	# If statement. First eval condition.
-	# Dispatch. First eval and save the params.
+	# if statement
+	# eval condition.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
@@ -4143,14 +4191,14 @@ label31:
 	li	$t1 1
 	jal	_dispatch_abort
 label40:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto isNil
+	# jump to isNil
 	jalr		$t1
 
 	# extract the bool content from acc to t1
@@ -4159,13 +4207,14 @@ label40:
 	# if t1 == 0 goto false
 	beq	$t1 $zero label41
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const8
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4174,20 +4223,21 @@ label40:
 	li	$t1 1
 	jal	_dispatch_abort
 label43:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4196,23 +4246,24 @@ label43:
 	li	$t1 1
 	jal	_dispatch_abort
 label44:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4221,20 +4272,21 @@ label44:
 	li	$t1 1
 	jal	_dispatch_abort
 label45:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4243,32 +4295,33 @@ label45:
 	li	$t1 1
 	jal	_dispatch_abort
 label46:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 0($t1)
 
-	# jumpto abort
+	# jump to abort
 	jalr		$t1
 
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
-	# jumpt finish
+	# jump to finish
 	b	label42
 
 # False:
 label41:
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const9
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4277,14 +4330,14 @@ label41:
 	li	$t1 1
 	jal	_dispatch_abort
 label47:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 # Finish:
@@ -4319,32 +4372,34 @@ Lambda.init:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -4374,13 +4429,14 @@ Lambda.print_self:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const10
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4389,20 +4445,21 @@ Lambda.print_self:
 	li	$t1 1
 	jal	_dispatch_abort
 label48:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -4413,23 +4470,24 @@ label48:
 	li	$t1 1
 	jal	_dispatch_abort
 label49:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const11
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4438,20 +4496,21 @@ label49:
 	li	$t1 1
 	jal	_dispatch_abort
 label50:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -4462,18 +4521,18 @@ label50:
 	li	$t1 1
 	jal	_dispatch_abort
 label51:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -4503,8 +4562,8 @@ Lambda.beta:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -4534,17 +4593,18 @@ Lambda.apply:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is an attribute.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -4552,8 +4612,8 @@ Lambda.apply:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -4564,14 +4624,14 @@ Lambda.apply:
 	li	$t1 1
 	jal	_dispatch_abort
 label52:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto substitute
+	# jump to substitute
 	jalr		$t1
 
 
@@ -4601,11 +4661,12 @@ Lambda.substitute:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# If statement. First eval condition.
+	# if statement
+	# eval condition.
 	# equal
-	# First eval e1 and push.
-	# Object:
-	# It is a param.
+	# eval e1 and push.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
@@ -4613,22 +4674,22 @@ Lambda.substitute:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
-	# Object:
-	# It is an attribute.
+	# eval e2.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
 
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# Pretend that t1 = t2
+	# pretend that t1 = t2
 	la	$a0 bool_const1
-	# Compare the two pointers.
+	# compare the two pointers.
 	beq	$t1 $t2 label53
 	la	$a0 bool_const0
 label53:
@@ -4638,28 +4699,29 @@ label53:
 	# if t1 == 0 goto false
 	beq	$t1 $zero label54
 
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
-	# jumpt finish
+	# jump to finish
 	b	label55
 
 # False:
 label54:
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -4667,8 +4729,8 @@ label54:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -4679,22 +4741,22 @@ label54:
 	li	$t1 1
 	jal	_dispatch_abort
 label56:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto substitute
+	# jump to substitute
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	la	$a0 Lambda_protObj
 	jal	Object.copy
 	jal	Lambda_init
@@ -4702,17 +4764,18 @@ label56:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is an attribute.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
@@ -4720,8 +4783,8 @@ label56:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
@@ -4732,14 +4795,14 @@ label56:
 	li	$t1 1
 	jal	_dispatch_abort
 label57:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto init
+	# jump to init
 	jalr		$t1
 
 	# pop
@@ -4777,13 +4840,14 @@ Lambda.gen_code:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const12
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4792,35 +4856,37 @@ Lambda.gen_code:
 	li	$t1 1
 	jal	_dispatch_abort
 label58:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -4831,21 +4897,21 @@ label58:
 	li	$t1 1
 	jal	_dispatch_abort
 label59:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto add
+	# jump to add
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4854,23 +4920,24 @@ label59:
 	li	$t1 1
 	jal	_dispatch_abort
 label60:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 16($t1)
 
-	# jumpto out_int
+	# jump to out_int
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const13
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4879,21 +4946,23 @@ label60:
 	li	$t1 1
 	jal	_dispatch_abort
 label61:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# If statement. First eval condition.
-	# Dispatch. First eval and save the params.
+	# if statement
+	# eval condition.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
@@ -4904,14 +4973,14 @@ label61:
 	li	$t1 1
 	jal	_dispatch_abort
 label62:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto isNil
+	# jump to isNil
 	jalr		$t1
 
 	# extract the bool content from acc to t1
@@ -4920,13 +4989,14 @@ label62:
 	# if t1 == 0 goto false
 	beq	$t1 $zero label63
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const14
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4935,28 +5005,29 @@ label62:
 	li	$t1 1
 	jal	_dispatch_abort
 label65:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# jumpt finish
+	# jump to finish
 	b	label64
 
 # False:
 label63:
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const15
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -4965,20 +5036,20 @@ label63:
 	li	$t1 1
 	jal	_dispatch_abort
 label66:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 # Finish:
 label64:
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -5008,13 +5079,14 @@ Lambda.gen_closure_code:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const16
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5023,19 +5095,20 @@ Lambda.gen_closure_code:
 	li	$t1 1
 	jal	_dispatch_abort
 label67:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 20($fp)
 	addiu	$a1 $fp 20
 	jal	_GenGC_Assign
@@ -5043,8 +5116,8 @@ label67:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5053,23 +5126,24 @@ label67:
 	li	$t1 1
 	jal	_dispatch_abort
 label68:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 16($t1)
 
-	# jumpto out_int
+	# jump to out_int
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const17
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5078,23 +5152,24 @@ label68:
 	li	$t1 1
 	jal	_dispatch_abort
 label69:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const18
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5103,23 +5178,24 @@ label69:
 	li	$t1 1
 	jal	_dispatch_abort
 label70:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const19
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5128,19 +5204,20 @@ label70:
 	li	$t1 1
 	jal	_dispatch_abort
 label71:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 20($fp)
 	addiu	$a1 $fp 20
 	jal	_GenGC_Assign
@@ -5148,8 +5225,8 @@ label71:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5158,23 +5235,24 @@ label71:
 	li	$t1 1
 	jal	_dispatch_abort
 label72:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 16($t1)
 
-	# jumpto out_int
+	# jump to out_int
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const20
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5183,23 +5261,24 @@ label72:
 	li	$t1 1
 	jal	_dispatch_abort
 label73:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const21
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5208,20 +5287,22 @@ label73:
 	li	$t1 1
 	jal	_dispatch_abort
 label74:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is an attribute.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -5229,8 +5310,8 @@ label74:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
@@ -5241,20 +5322,20 @@ label74:
 	li	$t1 1
 	jal	_dispatch_abort
 label75:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto add
+	# jump to add
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -5262,8 +5343,8 @@ label75:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -5274,23 +5355,24 @@ label75:
 	li	$t1 1
 	jal	_dispatch_abort
 label76:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto gen_code
+	# jump to gen_code
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const22
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5299,23 +5381,24 @@ label76:
 	li	$t1 1
 	jal	_dispatch_abort
 label77:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const23
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5324,14 +5407,14 @@ label77:
 	li	$t1 1
 	jal	_dispatch_abort
 label78:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 
@@ -5361,32 +5444,34 @@ App.init:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
-	# Assign. First eval the expr.
-	# Object:
-	# It is a param.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -5416,13 +5501,14 @@ App.print_self:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const24
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5431,20 +5517,21 @@ App.print_self:
 	li	$t1 1
 	jal	_dispatch_abort
 label79:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -5455,23 +5542,24 @@ label79:
 	li	$t1 1
 	jal	_dispatch_abort
 label80:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const25
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5480,20 +5568,21 @@ label80:
 	li	$t1 1
 	jal	_dispatch_abort
 label81:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -5504,23 +5593,24 @@ label81:
 	li	$t1 1
 	jal	_dispatch_abort
 label82:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const26
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5529,18 +5619,18 @@ label82:
 	li	$t1 1
 	jal	_dispatch_abort
 label83:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 
@@ -5571,20 +5661,20 @@ App.beta:
 
 	# evaluating expression and put it to ACC
 	# case expr
-	# First eval e0
-	# Object:
-	# It is an attribute.
+	# eval e0
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
 
-	# If e0 = void, abort
+	# if e0 = void, abort
 	bne	$a0 $zero label84
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_case_abort2
 label84:
-	# T1 = type(acc)
+	# t1 = type(acc)
 	lw	$t1 0($a0)
 	# tag = 12 : goto case 0
 	li	$t2 12
@@ -5608,16 +5698,17 @@ label84:
 	beq	$t1 $t2 label86
 
 	# ----------------
-	# No match
+	# no match
 	jal	_case_abort
 	b	label87
 # eval expr 0
 label85:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is an attribute.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -5625,8 +5716,8 @@ label85:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 	addiu	$a1 $sp 8
 	jal	_GenGC_Assign
@@ -5637,29 +5728,30 @@ label85:
 	li	$t1 1
 	jal	_dispatch_abort
 label88:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto apply
+	# jump to apply
 	jalr		$t1
 
 	addiu	$sp $sp 4
-	# Jumpto finish
+	# jump to finish
 	b	label87
 # eval expr 1
 label86:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -5670,22 +5762,22 @@ label86:
 	li	$t1 1
 	jal	_dispatch_abort
 label89:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto beta
+	# jump to beta
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	la	$a0 App_protObj
 	jal	Object.copy
 	jal	App_init
@@ -5693,17 +5785,18 @@ label89:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 	addiu	$a1 $sp 8
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -5711,8 +5804,8 @@ label89:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
@@ -5723,14 +5816,14 @@ label89:
 	li	$t1 1
 	jal	_dispatch_abort
 label90:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto init
+	# jump to init
 	jalr		$t1
 
 	# pop
@@ -5740,7 +5833,7 @@ label90:
 	addiu	$sp $sp 4
 
 	addiu	$sp $sp 4
-	# Jumpto finish
+	# jump to finish
 	b	label87
 #finish:
 label87:
@@ -5772,19 +5865,20 @@ App.substitute:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -5792,8 +5886,8 @@ App.substitute:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -5804,33 +5898,34 @@ App.substitute:
 	li	$t1 1
 	jal	_dispatch_abort
 label91:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto substitute
+	# jump to substitute
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -5838,8 +5933,8 @@ label91:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -5850,22 +5945,22 @@ label91:
 	li	$t1 1
 	jal	_dispatch_abort
 label92:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto substitute
+	# jump to substitute
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	la	$a0 App_protObj
 	jal	Object.copy
 	jal	App_init
@@ -5873,17 +5968,18 @@ label92:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
@@ -5891,8 +5987,8 @@ label92:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
@@ -5903,14 +5999,14 @@ label92:
 	li	$t1 1
 	jal	_dispatch_abort
 label93:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto init
+	# jump to init
 	jalr		$t1
 
 	# pop
@@ -5949,13 +6045,14 @@ App.gen_code:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const27
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -5964,27 +6061,28 @@ App.gen_code:
 	li	$t1 1
 	jal	_dispatch_abort
 label94:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -5992,8 +6090,8 @@ label94:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 12($s0)
 	addiu	$a1 $s0 12
 	jal	_GenGC_Assign
@@ -6004,23 +6102,24 @@ label94:
 	li	$t1 1
 	jal	_dispatch_abort
 label95:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto gen_code
+	# jump to gen_code
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const28
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6029,23 +6128,24 @@ label95:
 	li	$t1 1
 	jal	_dispatch_abort
 label96:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const29
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6054,27 +6154,28 @@ label96:
 	li	$t1 1
 	jal	_dispatch_abort
 label97:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -6082,8 +6183,8 @@ label97:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is an attribute.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 	addiu	$a1 $s0 16
 	jal	_GenGC_Assign
@@ -6094,23 +6195,24 @@ label97:
 	li	$t1 1
 	jal	_dispatch_abort
 label98:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto gen_code
+	# jump to gen_code
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const30
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6119,23 +6221,24 @@ label98:
 	li	$t1 1
 	jal	_dispatch_abort
 label99:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const31
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6144,23 +6247,24 @@ label99:
 	li	$t1 1
 	jal	_dispatch_abort
 label100:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const32
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6169,23 +6273,24 @@ label100:
 	li	$t1 1
 	jal	_dispatch_abort
 label101:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const33
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6194,23 +6299,24 @@ label101:
 	li	$t1 1
 	jal	_dispatch_abort
 label102:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const34
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6219,14 +6325,14 @@ label102:
 	li	$t1 1
 	jal	_dispatch_abort
 label103:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 
@@ -6256,8 +6362,8 @@ Term.var:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	la	$a0 Variable_protObj
 	jal	Object.copy
 	jal	Variable_init
@@ -6265,9 +6371,10 @@ Term.var:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -6275,8 +6382,8 @@ Term.var:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 	addiu	$a1 $sp 8
 	jal	_GenGC_Assign
@@ -6287,14 +6394,14 @@ Term.var:
 	li	$t1 1
 	jal	_dispatch_abort
 label104:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto init
+	# jump to init
 	jalr		$t1
 
 	# pop
@@ -6327,8 +6434,8 @@ Term.lam:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	la	$a0 Lambda_protObj
 	jal	Object.copy
 	jal	Lambda_init
@@ -6336,17 +6443,18 @@ Term.lam:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -6354,8 +6462,8 @@ Term.lam:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
@@ -6366,14 +6474,14 @@ Term.lam:
 	li	$t1 1
 	jal	_dispatch_abort
 label105:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto init
+	# jump to init
 	jalr		$t1
 
 	# pop
@@ -6406,8 +6514,8 @@ Term.app:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	la	$a0 App_protObj
 	jal	Object.copy
 	jal	App_init
@@ -6415,17 +6523,18 @@ Term.app:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a param.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a param.
 	lw	$a0 16($fp)
 	addiu	$a1 $fp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -6433,8 +6542,8 @@ Term.app:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
@@ -6445,14 +6554,14 @@ Term.app:
 	li	$t1 1
 	jal	_dispatch_abort
 label106:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto init
+	# jump to init
 	jalr		$t1
 
 	# pop
@@ -6485,15 +6594,16 @@ Term.i:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const35
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6502,31 +6612,32 @@ Term.i:
 	li	$t1 1
 	jal	_dispatch_abort
 label107:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto var
+	# jump to var
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 	addiu	$a1 $sp 8
 	jal	_GenGC_Assign
@@ -6534,8 +6645,8 @@ label107:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6544,14 +6655,14 @@ label107:
 	li	$t1 1
 	jal	_dispatch_abort
 label108:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto lam
+	# jump to lam
 	jalr		$t1
 
 	# pop
@@ -6584,15 +6695,16 @@ Term.k:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const35
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6601,29 +6713,30 @@ Term.k:
 	li	$t1 1
 	jal	_dispatch_abort
 label109:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto var
+	# jump to var
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const36
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6632,40 +6745,42 @@ label109:
 	li	$t1 1
 	jal	_dispatch_abort
 label110:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto var
+	# jump to var
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 	addiu	$a1 $sp 8
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 	addiu	$a1 $sp 8
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 16($sp)
 	addiu	$a1 $sp 16
 	jal	_GenGC_Assign
@@ -6673,8 +6788,8 @@ label110:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6683,21 +6798,21 @@ label110:
 	li	$t1 1
 	jal	_dispatch_abort
 label111:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto lam
+	# jump to lam
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6706,14 +6821,14 @@ label111:
 	li	$t1 1
 	jal	_dispatch_abort
 label112:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto lam
+	# jump to lam
 	jalr		$t1
 
 	# pop
@@ -6749,15 +6864,16 @@ Term.s:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const35
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6766,29 +6882,30 @@ Term.s:
 	li	$t1 1
 	jal	_dispatch_abort
 label113:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto var
+	# jump to var
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const36
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6797,29 +6914,30 @@ label113:
 	li	$t1 1
 	jal	_dispatch_abort
 label114:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto var
+	# jump to var
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const37
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6828,59 +6946,64 @@ label114:
 	li	$t1 1
 	jal	_dispatch_abort
 label115:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto var
+	# jump to var
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 24($sp)
 	addiu	$a1 $sp 24
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 20($sp)
 	addiu	$a1 $sp 20
 	jal	_GenGC_Assign
@@ -6888,8 +7011,8 @@ label115:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6898,29 +7021,30 @@ label115:
 	li	$t1 1
 	jal	_dispatch_abort
 label116:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 24($sp)
 	addiu	$a1 $sp 24
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 24($sp)
 	addiu	$a1 $sp 24
 	jal	_GenGC_Assign
@@ -6928,8 +7052,8 @@ label116:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6938,21 +7062,21 @@ label116:
 	li	$t1 1
 	jal	_dispatch_abort
 label117:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6961,21 +7085,21 @@ label117:
 	li	$t1 1
 	jal	_dispatch_abort
 label118:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -6984,21 +7108,21 @@ label118:
 	li	$t1 1
 	jal	_dispatch_abort
 label119:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto lam
+	# jump to lam
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7007,21 +7131,21 @@ label119:
 	li	$t1 1
 	jal	_dispatch_abort
 label120:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto lam
+	# jump to lam
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7030,14 +7154,14 @@ label120:
 	li	$t1 1
 	jal	_dispatch_abort
 label121:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto lam
+	# jump to lam
 	jalr		$t1
 
 	# pop
@@ -7076,13 +7200,14 @@ Main.beta_reduce:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const38
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7091,20 +7216,21 @@ Main.beta_reduce:
 	li	$t1 1
 	jal	_dispatch_abort
 label122:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -7115,63 +7241,65 @@ label122:
 	li	$t1 1
 	jal	_dispatch_abort
 label123:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	la	$a0 bool_const0
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	move	$a0 $zero
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# While loop
+	# while loop
 	# start:
 label124:
-	# ACC = pred
+	# acc = pred
 	# the 'not' operator
-	# First eval the bool
-	# Object:
-	# It is a let variable.
+	# first eval the bool
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 	addiu	$a1 $sp 8
 	jal	_GenGC_Assign
 
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label126
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label126:
-	# extract int inside bool
+	# get int from bool
 	lw	$t1 12($a0)
 
-	# if pred == false jumpto finish
+	# if pred == false jump to finish
 	beq	$t1 $zero label125
 
-	# Assign. First eval the expr.
-	# Dispatch. First eval and save the params.
+	# assign
+	# eval the expr.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -7182,26 +7310,27 @@ label126:
 	li	$t1 1
 	jal	_dispatch_abort
 label127:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 32($t1)
 
-	# jumpto beta
+	# jump to beta
 	jalr		$t1
 
-	# Now find the lvalue.
-	# It is a let variable.
+	# find the lvalue.
+	# its' a let variable.
 	sw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
-	# If statement. First eval condition.
+	# if statement
+	# eval condition.
 	# equal
-	# First eval e1 and push.
-	# Object:
-	# It is a let variable.
+	# eval e1 and push.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
@@ -7209,22 +7338,22 @@ label127:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
-	# Object:
-	# It is a param.
+	# eval e2.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
 
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# Pretend that t1 = t2
+	# pretend that t1 = t2
 	la	$a0 bool_const1
-	# Compare the two pointers.
+	# compare the two pointers.
 	beq	$t1 $t2 label128
 	la	$a0 bool_const0
 label128:
@@ -7234,37 +7363,40 @@ label128:
 	# if t1 == 0 goto false
 	beq	$t1 $zero label129
 
-	# Assign. First eval the expr.
+	# assign
+	# eval the expr.
 	la	$a0 bool_const1
-	# Now find the lvalue.
-	# It is a let variable.
+	# find the lvalue.
+	# its' a let variable.
 	sw	$a0 8($sp)
 	addiu	$a1 $sp 8
 	jal	_GenGC_Assign
-	# jumpt finish
+	# jump to finish
 	b	label130
 
 # False:
 label129:
-	# Assign. First eval the expr.
-	# Object:
-	# It is a let variable.
+	# assign
+	# eval the expr.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
 
-	# Now find the lvalue.
-	# It is a param.
+	# find the lvalue.
+	# it's a param.
 	sw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const39
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7273,20 +7405,21 @@ label129:
 	li	$t1 1
 	jal	_dispatch_abort
 label131:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -7297,31 +7430,32 @@ label131:
 	li	$t1 1
 	jal	_dispatch_abort
 label132:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
 # Finish:
 label130:
-	# Jumpto start
+	# jump to start
 	b	label124
-	# Finish:
+	# finish:
 label125:
-	# ACC = void
+	# acc = void
 	move	$a0 $zero
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7330,18 +7464,18 @@ label125:
 	li	$t1 1
 	jal	_dispatch_abort
 label133:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -7379,13 +7513,14 @@ Main.eval_class:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const40
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7394,23 +7529,24 @@ Main.eval_class:
 	li	$t1 1
 	jal	_dispatch_abort
 label134:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const41
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7419,23 +7555,24 @@ label134:
 	li	$t1 1
 	jal	_dispatch_abort
 label135:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const23
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7444,14 +7581,14 @@ label135:
 	li	$t1 1
 	jal	_dispatch_abort
 label136:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 
@@ -7481,13 +7618,14 @@ Main.closure_class:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const42
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7496,23 +7634,24 @@ Main.closure_class:
 	li	$t1 1
 	jal	_dispatch_abort
 label137:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const43
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7521,23 +7660,24 @@ label137:
 	li	$t1 1
 	jal	_dispatch_abort
 label138:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const44
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7546,23 +7686,24 @@ label138:
 	li	$t1 1
 	jal	_dispatch_abort
 label139:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const45
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7571,23 +7712,24 @@ label139:
 	li	$t1 1
 	jal	_dispatch_abort
 label140:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const46
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7596,23 +7738,24 @@ label140:
 	li	$t1 1
 	jal	_dispatch_abort
 label141:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const47
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7621,23 +7764,24 @@ label141:
 	li	$t1 1
 	jal	_dispatch_abort
 label142:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const48
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7646,23 +7790,24 @@ label142:
 	li	$t1 1
 	jal	_dispatch_abort
 label143:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const23
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7671,14 +7816,14 @@ label143:
 	li	$t1 1
 	jal	_dispatch_abort
 label144:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 
@@ -7708,9 +7853,10 @@ Main.gen_code:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
 	la	$a0 LambdaListRef_protObj
 	jal	Object.copy
@@ -7721,27 +7867,28 @@ Main.gen_code:
 	li	$t1 1
 	jal	_dispatch_abort
 label145:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto reset
+	# jump to reset
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const49
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7750,20 +7897,21 @@ label145:
 	li	$t1 1
 	jal	_dispatch_abort
 label146:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -7774,23 +7922,24 @@ label146:
 	li	$t1 1
 	jal	_dispatch_abort
 label147:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const50
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7799,23 +7948,24 @@ label147:
 	li	$t1 1
 	jal	_dispatch_abort
 label148:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const51
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7824,20 +7974,21 @@ label148:
 	li	$t1 1
 	jal	_dispatch_abort
 label149:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7846,20 +7997,21 @@ label149:
 	li	$t1 1
 	jal	_dispatch_abort
 label150:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 56($t1)
 
-	# jumpto eval_class
+	# jump to eval_class
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7868,23 +8020,24 @@ label150:
 	li	$t1 1
 	jal	_dispatch_abort
 label151:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 60($t1)
 
-	# jumpto closure_class
+	# jump to closure_class
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const52
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7893,23 +8046,24 @@ label151:
 	li	$t1 1
 	jal	_dispatch_abort
 label152:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const53
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7918,24 +8072,25 @@ label152:
 	li	$t1 1
 	jal	_dispatch_abort
 label153:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 VarList_protObj
 	jal	Object.copy
 	jal	VarList_init
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 	addiu	$a1 $sp 8
 	jal	_GenGC_Assign
@@ -7943,8 +8098,8 @@ label153:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a param.
+	# object:
+	# it's a param.
 	lw	$a0 12($fp)
 	addiu	$a1 $fp 12
 	jal	_GenGC_Assign
@@ -7955,23 +8110,24 @@ label153:
 	li	$t1 1
 	jal	_dispatch_abort
 label154:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto gen_code
+	# jump to gen_code
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const54
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -7980,26 +8136,27 @@ label154:
 	li	$t1 1
 	jal	_dispatch_abort
 label155:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# While loop
+	# while loop
 	# start:
 label156:
-	# ACC = pred
+	# acc = pred
 	# the 'not' operator
-	# First eval the bool
-	# Dispatch. First eval and save the params.
+	# first eval the bool
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
@@ -8010,38 +8167,39 @@ label156:
 	li	$t1 1
 	jal	_dispatch_abort
 label158:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto isNil
+	# jump to isNil
 	jalr		$t1
 
-	# Extract the int inside the bool
+	# get int from bool
 	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
+	# pretend acc = false, then we construct true
 	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
+	# if acc = false, jump to finish
 	beq	$t1 $zero label159
-	# Load false
+	# load false
 	la	$a0 bool_const0
 	# finish:
 label159:
-	# extract int inside bool
+	# get int from bool
 	lw	$t1 12($a0)
 
-	# if pred == false jumpto finish
+	# if pred == false jump to finish
 	beq	$t1 $zero label157
 
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
@@ -8052,26 +8210,27 @@ label159:
 	li	$t1 1
 	jal	_dispatch_abort
 label160:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 16($t1)
 
-	# jumpto headE
+	# jump to headE
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 8($sp)
 	addiu	$a1 $sp 8
 	jal	_GenGC_Assign
@@ -8082,26 +8241,27 @@ label160:
 	li	$t1 1
 	jal	_dispatch_abort
 label161:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 20($t1)
 
-	# jumpto headC
+	# jump to headC
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Let expr
-	# First eval init
-	# Dispatch. First eval and save the params.
+	# let expr
+	# eval init
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 12($sp)
 	addiu	$a1 $sp 12
 	jal	_GenGC_Assign
@@ -8112,24 +8272,25 @@ label161:
 	li	$t1 1
 	jal	_dispatch_abort
 label162:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 24($t1)
 
-	# jumpto headN
+	# jump to headN
 	jalr		$t1
 
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 16($sp)
 	addiu	$a1 $sp 16
 	jal	_GenGC_Assign
@@ -8140,35 +8301,36 @@ label162:
 	li	$t1 1
 	jal	_dispatch_abort
 label163:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto removeHead
+	# jump to removeHead
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 	addiu	$a1 $sp 4
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 16($sp)
 	addiu	$a1 $sp 16
 	jal	_GenGC_Assign
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 24($sp)
 	addiu	$a1 $sp 24
 	jal	_GenGC_Assign
@@ -8176,8 +8338,8 @@ label163:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 20($sp)
 	addiu	$a1 $sp 20
 	jal	_GenGC_Assign
@@ -8188,14 +8350,14 @@ label163:
 	li	$t1 1
 	jal	_dispatch_abort
 label164:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 52($t1)
 
-	# jumpto gen_closure_code
+	# jump to gen_closure_code
 	jalr		$t1
 
 	# pop
@@ -8207,19 +8369,20 @@ label164:
 	# pop
 	addiu	$sp $sp 4
 
-	# Jumpto start
+	# jump to start
 	b	label156
-	# Finish:
+	# finish:
 label157:
-	# ACC = void
+	# acc = void
 	move	$a0 $zero
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const50
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8228,14 +8391,14 @@ label157:
 	li	$t1 1
 	jal	_dispatch_abort
 label165:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 	# pop
@@ -8268,12 +8431,14 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8282,14 +8447,14 @@ Main.main:
 	li	$t1 1
 	jal	_dispatch_abort
 label166:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	# if obj = void: abort
@@ -8298,23 +8463,24 @@ label166:
 	li	$t1 1
 	jal	_dispatch_abort
 label167:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8323,22 +8489,24 @@ label167:
 	li	$t1 1
 	jal	_dispatch_abort
 label168:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8347,14 +8515,14 @@ label168:
 	li	$t1 1
 	jal	_dispatch_abort
 label169:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto k
+	# jump to k
 	jalr		$t1
 
 	# if obj = void: abort
@@ -8363,23 +8531,24 @@ label169:
 	li	$t1 1
 	jal	_dispatch_abort
 label170:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8388,22 +8557,24 @@ label170:
 	li	$t1 1
 	jal	_dispatch_abort
 label171:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8412,14 +8583,14 @@ label171:
 	li	$t1 1
 	jal	_dispatch_abort
 label172:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto s
+	# jump to s
 	jalr		$t1
 
 	# if obj = void: abort
@@ -8428,23 +8599,24 @@ label172:
 	li	$t1 1
 	jal	_dispatch_abort
 label173:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 28($t1)
 
-	# jumpto print_self
+	# jump to print_self
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const1
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8453,24 +8625,29 @@ label173:
 	li	$t1 1
 	jal	_dispatch_abort
 label174:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8479,22 +8656,23 @@ label174:
 	li	$t1 1
 	jal	_dispatch_abort
 label175:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto s
+	# jump to s
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8503,21 +8681,21 @@ label175:
 	li	$t1 1
 	jal	_dispatch_abort
 label176:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto k
+	# jump to k
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8526,22 +8704,23 @@ label176:
 	li	$t1 1
 	jal	_dispatch_abort
 label177:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8550,21 +8729,21 @@ label177:
 	li	$t1 1
 	jal	_dispatch_abort
 label178:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8573,22 +8752,23 @@ label178:
 	li	$t1 1
 	jal	_dispatch_abort
 label179:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8597,21 +8777,21 @@ label179:
 	li	$t1 1
 	jal	_dispatch_abort
 label180:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8620,21 +8800,21 @@ label180:
 	li	$t1 1
 	jal	_dispatch_abort
 label181:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8643,23 +8823,27 @@ label181:
 	li	$t1 1
 	jal	_dispatch_abort
 label182:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 52($t1)
 
-	# jumpto beta_reduce
+	# jump to beta_reduce
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8668,22 +8852,23 @@ label182:
 	li	$t1 1
 	jal	_dispatch_abort
 label183:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto k
+	# jump to k
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8692,21 +8877,21 @@ label183:
 	li	$t1 1
 	jal	_dispatch_abort
 label184:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8715,22 +8900,23 @@ label184:
 	li	$t1 1
 	jal	_dispatch_abort
 label185:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8739,21 +8925,21 @@ label185:
 	li	$t1 1
 	jal	_dispatch_abort
 label186:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8762,21 +8948,21 @@ label186:
 	li	$t1 1
 	jal	_dispatch_abort
 label187:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8785,22 +8971,25 @@ label187:
 	li	$t1 1
 	jal	_dispatch_abort
 label188:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 52($t1)
 
-	# jumpto beta_reduce
+	# jump to beta_reduce
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8809,22 +8998,23 @@ label188:
 	li	$t1 1
 	jal	_dispatch_abort
 label189:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8833,21 +9023,21 @@ label189:
 	li	$t1 1
 	jal	_dispatch_abort
 label190:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8856,21 +9046,21 @@ label190:
 	li	$t1 1
 	jal	_dispatch_abort
 label191:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8879,24 +9069,29 @@ label191:
 	li	$t1 1
 	jal	_dispatch_abort
 label192:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 64($t1)
 
-	# jumpto gen_code
+	# jump to gen_code
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8905,22 +9100,23 @@ label192:
 	li	$t1 1
 	jal	_dispatch_abort
 label193:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto s
+	# jump to s
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8929,21 +9125,21 @@ label193:
 	li	$t1 1
 	jal	_dispatch_abort
 label194:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto k
+	# jump to k
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8952,22 +9148,23 @@ label194:
 	li	$t1 1
 	jal	_dispatch_abort
 label195:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8976,21 +9173,21 @@ label195:
 	li	$t1 1
 	jal	_dispatch_abort
 label196:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -8999,22 +9196,23 @@ label196:
 	li	$t1 1
 	jal	_dispatch_abort
 label197:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9023,21 +9221,21 @@ label197:
 	li	$t1 1
 	jal	_dispatch_abort
 label198:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9046,21 +9244,21 @@ label198:
 	li	$t1 1
 	jal	_dispatch_abort
 label199:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9069,29 +9267,39 @@ label199:
 	li	$t1 1
 	jal	_dispatch_abort
 label200:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 64($t1)
 
-	# jumpto gen_code
+	# jump to gen_code
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9100,22 +9308,23 @@ label200:
 	li	$t1 1
 	jal	_dispatch_abort
 label201:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9124,21 +9333,21 @@ label201:
 	li	$t1 1
 	jal	_dispatch_abort
 label202:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto k
+	# jump to k
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9147,22 +9356,23 @@ label202:
 	li	$t1 1
 	jal	_dispatch_abort
 label203:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9171,21 +9381,21 @@ label203:
 	li	$t1 1
 	jal	_dispatch_abort
 label204:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto s
+	# jump to s
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9194,22 +9404,23 @@ label204:
 	li	$t1 1
 	jal	_dispatch_abort
 label205:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9218,21 +9429,21 @@ label205:
 	li	$t1 1
 	jal	_dispatch_abort
 label206:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto s
+	# jump to s
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9241,22 +9452,23 @@ label206:
 	li	$t1 1
 	jal	_dispatch_abort
 label207:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9265,21 +9477,21 @@ label207:
 	li	$t1 1
 	jal	_dispatch_abort
 label208:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto k
+	# jump to k
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9288,22 +9500,23 @@ label208:
 	li	$t1 1
 	jal	_dispatch_abort
 label209:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9312,21 +9525,21 @@ label209:
 	li	$t1 1
 	jal	_dispatch_abort
 label210:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto s
+	# jump to s
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9335,22 +9548,23 @@ label210:
 	li	$t1 1
 	jal	_dispatch_abort
 label211:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9359,21 +9573,21 @@ label211:
 	li	$t1 1
 	jal	_dispatch_abort
 label212:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9382,22 +9596,23 @@ label212:
 	li	$t1 1
 	jal	_dispatch_abort
 label213:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9406,21 +9621,21 @@ label213:
 	li	$t1 1
 	jal	_dispatch_abort
 label214:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto k
+	# jump to k
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9429,22 +9644,23 @@ label214:
 	li	$t1 1
 	jal	_dispatch_abort
 label215:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9453,21 +9669,21 @@ label215:
 	li	$t1 1
 	jal	_dispatch_abort
 label216:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9476,21 +9692,21 @@ label216:
 	li	$t1 1
 	jal	_dispatch_abort
 label217:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9499,23 +9715,27 @@ label217:
 	li	$t1 1
 	jal	_dispatch_abort
 label218:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 64($t1)
 
-	# jumpto gen_code
+	# jump to gen_code
 	jalr		$t1
 
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9524,23 +9744,25 @@ label218:
 	li	$t1 1
 	jal	_dispatch_abort
 label219:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 40($t1)
 
-	# jumpto i
+	# jump to i
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9549,22 +9771,23 @@ label219:
 	li	$t1 1
 	jal	_dispatch_abort
 label220:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto k
+	# jump to k
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9573,21 +9796,21 @@ label220:
 	li	$t1 1
 	jal	_dispatch_abort
 label221:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto s
+	# jump to s
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9596,21 +9819,21 @@ label221:
 	li	$t1 1
 	jal	_dispatch_abort
 label222:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9619,23 +9842,25 @@ label222:
 	li	$t1 1
 	jal	_dispatch_abort
 label223:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9644,23 +9869,25 @@ label223:
 	li	$t1 1
 	jal	_dispatch_abort
 label224:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 44($t1)
 
-	# jumpto k
+	# jump to k
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9669,22 +9896,23 @@ label224:
 	li	$t1 1
 	jal	_dispatch_abort
 label225:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto s
+	# jump to s
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9693,21 +9921,21 @@ label225:
 	li	$t1 1
 	jal	_dispatch_abort
 label226:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 48($t1)
 
-	# jumpto s
+	# jump to s
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9716,21 +9944,21 @@ label226:
 	li	$t1 1
 	jal	_dispatch_abort
 label227:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9739,21 +9967,21 @@ label227:
 	li	$t1 1
 	jal	_dispatch_abort
 label228:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9762,21 +9990,21 @@ label228:
 	li	$t1 1
 	jal	_dispatch_abort
 label229:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 36($t1)
 
-	# jumpto app
+	# jump to app
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -9785,14 +10013,14 @@ label229:
 	li	$t1 1
 	jal	_dispatch_abort
 label230:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 64($t1)
 
-	# jumpto gen_code
+	# jump to gen_code
 	jalr		$t1
 
 	la	$a0 int_const1

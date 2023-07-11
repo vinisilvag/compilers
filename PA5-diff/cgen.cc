@@ -1296,14 +1296,15 @@ CgenNode::CgenNode(Class_ nd, Basicness bstatus, CgenClassTableP ct) :
 //*****************************************************************
 
 void assign_class::code(ostream& s, Environment env) {
-  s << "\t# Assign. First eval the expr." << endl;
+  s << "\t# assign" << endl;
+  s << "\t# eval the expr." << endl;
   expr->code(s, env);
 
-  s << "\t# Now find the lvalue." << endl;
+  s << "\t# find the lvalue." << endl;
   int idx;
 
   if ((idx = env.LookUpVar(name)) != -1) {
-    s << "\t# It is a let variable." << endl;
+    s << "\t# its' a let variable." << endl;
     
     emit_store(ACC, idx + 1, SP, s);
     
@@ -1312,7 +1313,7 @@ void assign_class::code(ostream& s, Environment env) {
       emit_jal("_GenGC_Assign", s);
     }
   } else if ((idx = env.LookUpParam(name)) != -1){
-    s << "\t# It is a param." << endl;
+    s << "\t# it's a param." << endl;
     
     emit_store(ACC, idx + 3, FP, s);
     
@@ -1322,7 +1323,7 @@ void assign_class::code(ostream& s, Environment env) {
     }
   }
   else if ((idx = env.LookUpAttrib(name)) != -1) {
-    s << "\t# It is an attribute." << endl;
+    s << "\t# it's an attribute." << endl;
 
     emit_store(ACC, idx + 3, SELF, s);
     
@@ -1336,7 +1337,8 @@ void assign_class::code(ostream& s, Environment env) {
 }
 
 void static_dispatch_class::code(ostream& s, Environment env) {
-  s << "\t# Static dispatch. First eval and save the params." << endl;
+  s << "\t# static dispatch" << endl;
+  s << "\t# eval and save the params." << endl;
 
   std::vector<Expression> actuals = GetActuals();
   Environment new_env = env;
@@ -1362,7 +1364,7 @@ void static_dispatch_class::code(ostream& s, Environment env) {
 
   Symbol _class_name = type_name;
   CgenNode* _class_node = cgen_classtable->GetClassNode(type_name);
-  s << "\t# Now we locate the method in the dispatch table." << endl;
+  s << "\t# locate the method in the dispatch table." << endl;
   s << "\t# t1 = " << type_name << ".dispTab" << endl;
 
   std::string addr = type_name->get_string();
@@ -1376,13 +1378,14 @@ void static_dispatch_class::code(ostream& s, Environment env) {
   emit_load(T1, idx, T1, s);
   s << endl;
 
-  s << "\t# jumpto " << name << endl;
+  s << "\t# jump to " << name << endl;
   emit_jalr(T1, s);
   s << endl;
 }
 
 void dispatch_class::code(ostream& s, Environment env) {
-  s << "\t# Dispatch. First eval and save the params." << endl;
+  s << "\t# dispatch" << endl;
+  s << "\t# eval and save the params." << endl;
   std::vector<Expression> actuals = GetActuals();
 
   for (Expression expr : actuals) {
@@ -1411,7 +1414,7 @@ void dispatch_class::code(ostream& s, Environment env) {
   }
 
   CgenNode* _class_node = cgen_classtable->GetClassNode(_class_name);
-  s << "\t# Now we locate the method in the dispatch table." << endl;
+  s << "\t# locate the method in the dispatch table." << endl;
   s << "\t# t1 = self.dispTab" << endl;
   emit_load(T1, 2, ACC, s);
   s << endl;
@@ -1421,13 +1424,14 @@ void dispatch_class::code(ostream& s, Environment env) {
   emit_load(T1, idx, T1, s);
   s << endl;
 
-  s << "\t# jumpto " << name << endl;
+  s << "\t# jump to " << name << endl;
   emit_jalr(T1, s);
   s << endl;
 }
 
 void cond_class::code(ostream& s, Environment env) {
-  s << "\t# If statement. First eval condition." << endl;
+  s << "\t# if statement" << endl;
+  s << "\t# eval condition." << endl;
   pred->code(s, env);
 
   s << "\t# extract the bool content from acc to t1" << endl;
@@ -1443,7 +1447,7 @@ void cond_class::code(ostream& s, Environment env) {
 
   then_exp->code(s, env);
 
-  s << "\t# jumpt finish" << endl;
+  s << "\t# jump to finish" << endl;
   emit_branch(label_num_finish, s);
   s << endl;
 
@@ -1461,30 +1465,30 @@ void loop_class::code(ostream& s, Environment env) {
   int finish = label_num + 1;
   label_num += 2;
 
-  s << "\t# While loop" << endl;
+  s << "\t# while loop" << endl;
   s << "\t# start:" << endl;
   emit_label_def(start, s);
 
-  s << "\t# ACC = pred" << endl;
+  s << "\t# acc = pred" << endl;
   pred->code(s, env);
 
-  s << "\t# extract int inside bool" << endl;
+  s << "\t# get int from bool" << endl;
   emit_fetch_int(T1, ACC, s);
   s << endl;
 
-  s << "\t# if pred == false jumpto finish" << endl;
+  s << "\t# if pred == false jump to finish" << endl;
   emit_beq(T1, ZERO, finish, s);
   s << endl;
 
   body->code(s, env);
 
-  s << "\t# Jumpto start" << endl;
+  s << "\t# jump to start" << endl;
   emit_branch(start, s);
 
-  s << "\t# Finish:" << endl;
+  s << "\t# finish:" << endl;
   emit_label_def(finish, s);
   
-  s << "\t# ACC = void" << endl;
+  s << "\t# acc = void" << endl;
   emit_move(ACC, ZERO, s);
 }
 
@@ -1493,10 +1497,10 @@ void typcase_class::code(ostream& s, Environment env) {
   std::vector<CgenNode*> _class_nodes = cgen_classtable->GetClassNodes();
   
   s << "\t# case expr" << endl;
-  s << "\t# First eval e0" << endl;
+  s << "\t# eval e0" << endl;
   expr->code(s, env);
 
-  s << "\t# If e0 = void, abort" << endl;
+  s << "\t# if e0 = void, abort" << endl;
   emit_bne(ACC, ZERO, label_num, s);
   emit_load_address(ACC, "str_const0", s);
   emit_load_imm(T1, 1, s);
@@ -1505,7 +1509,7 @@ void typcase_class::code(ostream& s, Environment env) {
   emit_label_def(label_num, s);
   ++label_num;
 
-  s << "\t# T1 = type(acc)" << endl;
+  s << "\t# t1 = type(acc)" << endl;
   emit_load(T1, 0, ACC, s);
 
   std::vector<branch_class*> _cases = GetCases();
@@ -1574,7 +1578,7 @@ void typcase_class::code(ostream& s, Environment env) {
     }
   }
 
-  s << "\t# No match" << endl;
+  s << "\t# no match" << endl;
   emit_jal("_case_abort", s);
   emit_branch(finish, s);
   
@@ -1591,7 +1595,7 @@ void typcase_class::code(ostream& s, Environment env) {
     _expr->code(s, env);
     emit_addiu(SP, SP, 4, s);
 
-    s << "\t# Jumpto finish" << endl;
+    s << "\t# jump to finish" << endl;
     emit_branch(finish, s);
     ++caseidx;
   }
@@ -1608,8 +1612,8 @@ void block_class::code(ostream& s, Environment env) {
 }
 
 void let_class::code(ostream& s, Environment env) {
-  s << "\t# Let expr" << endl;
-  s << "\t# First eval init" << endl;
+  s << "\t# let expr" << endl;
+  s << "\t# eval init" << endl;
 
   init->code(s, env);
 
@@ -1638,128 +1642,128 @@ void let_class::code(ostream& s, Environment env) {
 }
 
 void plus_class::code(ostream& s, Environment env) {
-  s << "\t# Int operation : Add" << endl;
-  s << "\t# First eval e1 and push." << endl;
+  s << "\t# int operation: add" << endl;
+  s << "\t# eval e1 and push." << endl;
   e1->code(s, env);
   emit_push(ACC, s);
   env.AddObstacle();
   s << endl;
 
-  s << "\t# Then eval e2 and make a copy for result." << endl;
+  s << "\t# eval e2 and make a copy for result." << endl;
   e2->code(s, env);
   emit_jal("Object.copy", s);
   s << endl;
 
-  s << "\t# Let's pop e1 to t1, move e2 to t2" << endl;
+  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# Extract the int inside the object." << endl;
+  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# Modify the int inside t2." << endl;
+  s << "\t# modify the int inside t2." << endl;
   emit_add(T3, T1, T2, s);
   emit_store(T3, 3, ACC, s);
   s << endl;
 }
 
 void sub_class::code(ostream& s, Environment env) {
-  s << "\t# Int operation : Sub" << endl;
-  s << "\t# First eval e1 and push." << endl;
+  s << "\t# int operation: sub" << endl;
+  s << "\t# eval e1 and push." << endl;
   e1->code(s, env);
   emit_push(ACC, s);
   env.AddObstacle();
   s << endl;
 
-  s << "\t# Then eval e2 and make a copy for result." << endl;
+  s << "\t# eval e2 and make a copy for result." << endl;
   e2->code(s, env);
   emit_jal("Object.copy", s);
   s << endl;
 
-  s << "\t# Let's pop e1 to t1, move e2 to t2" << endl;
+  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# Extract the int inside the object." << endl;
+  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# Modify the int inside t2." << endl;
+  s << "\t# modify the int inside t2." << endl;
   emit_sub(T3, T1, T2, s);
   emit_store(T3, 3, ACC, s);
   s << endl;
 }
 
 void mul_class::code(ostream& s, Environment env) {
-  s << "\t# Int operation : Mul" << endl;
-  s << "\t# First eval e1 and push." << endl;
+  s << "\t# int operation: mul" << endl;
+  s << "\t# eval e1 and push." << endl;
   e1->code(s, env);
   emit_push(ACC, s);
   env.AddObstacle();
   s << endl;
 
-  s << "\t# Then eval e2 and make a copy for result." << endl;
+  s << "\t# eval e2 and make a copy for result." << endl;
   e2->code(s, env);
   emit_jal("Object.copy", s);
   s << endl;
 
-  s << "\t# Let's pop e1 to t1, move e2 to t2" << endl;
+  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# Extract the int inside the object." << endl;
+  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# Modify the int inside t2." << endl;
+  s << "\t# modify the int inside t2." << endl;
   emit_mul(T3, T1, T2, s);
   emit_store(T3, 3, ACC, s);
   s << endl;
 }
 
 void divide_class::code(ostream& s, Environment env) {
-  s << "\t# Int operation : Div" << endl;
-  s << "\t# First eval e1 and push." << endl;
+  s << "\t# int operation: div" << endl;
+  s << "\t# eval e1 and push." << endl;
   e1->code(s, env);
   emit_push(ACC, s);
   env.AddObstacle();
   s << endl;
 
-  s << "\t# Then eval e2 and make a copy for result." << endl;
+  s << "\t# eval e2 and make a copy for result." << endl;
   e2->code(s, env);
   emit_jal("Object.copy", s);
   s << endl;
 
-  s << "\t# Let's pop e1 to t1, move e2 to t2" << endl;
+  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# Extract the int inside the object." << endl;
+  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# Modify the int inside t2." << endl;
+  s << "\t# modify the int inside t2." << endl;
   emit_div(T3, T1, T2, s);
   emit_store(T3, 3, ACC, s);
   s << endl;
 }
 
 void neg_class::code(ostream& s, Environment env) {
-  s << "\t# Neg" << endl;
-  s << "\t# Eval e1 and make a copy for result" << endl;
+  s << "\t# neg" << endl;
+  s << "\t# eval e1 and make a copy for result" << endl;
   e1->code(s, env);
   emit_jal("Object.copy", s);
   s << endl;
@@ -1771,32 +1775,32 @@ void neg_class::code(ostream& s, Environment env) {
 }
 
 void lt_class::code(ostream& s, Environment env) {
-  s << "\t# Int operation : Less than" << endl;
-  s << "\t# First eval e1 and push." << endl;
+  s << "\t# int operation: less than" << endl;
+  s << "\t# eval e1 and push." << endl;
 
   e1->code(s, env);
   emit_push(ACC, s);
   env.AddObstacle();
   s << endl;
 
-  s << "\t# Then eval e2." << endl;
+  s << "\t# eval e2." << endl;
   e2->code(s, env);
   s << endl;
 
-  s << "\t# Let's pop e1 to t1, move e2 to t2" << endl;
+  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# Extract the int inside the object." << endl;
+  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# Pretend that t1 < t2" << endl;
+  s << "\t# pretend that t1 < t2" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
-  s << "\t# If t1 < t2 jumpto finish" << endl;
+  s << "\t# if t1 < t2 jump to finish" << endl;
   emit_blt(T1, T2, label_num, s);
 
   emit_load_bool(ACC, BoolConst(0), s);
@@ -1807,17 +1811,17 @@ void lt_class::code(ostream& s, Environment env) {
 
 void eq_class::code(ostream& s, Environment env) {
   s << "\t# equal" << endl;
-  s << "\t# First eval e1 and push." << endl;
+  s << "\t# eval e1 and push." << endl;
   e1->code(s, env);
   emit_push(ACC, s);
   env.AddObstacle();
   s << endl;
 
-  s << "\t# Then eval e2." << endl;
+  s << "\t# eval e2." << endl;
   e2->code(s, env);
   s << endl;
 
-  s << "\t# Let's pop e1 to t1, move e2 to t2" << endl;
+  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
@@ -1832,10 +1836,10 @@ void eq_class::code(ostream& s, Environment env) {
     }
   }
 
-  s << "\t# Pretend that t1 = t2" << endl;
+  s << "\t# pretend that t1 = t2" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
 
-  s << "\t# Compare the two pointers." << endl;
+  s << "\t# compare the two pointers." << endl;
   emit_beq(T1, T2, label_num, s);
   emit_load_bool(ACC, BoolConst(0), s);
   emit_label_def(label_num, s);
@@ -1843,31 +1847,31 @@ void eq_class::code(ostream& s, Environment env) {
 }
 
 void leq_class::code(ostream& s, Environment env) {
-  s << "\t# Int operation : Less or equal" << endl;
-  s << "\t# First eval e1 and push." << endl;
+  s << "\t# int operation: less or equal" << endl;
+  s << "\t# eval e1 and push." << endl;
   e1->code(s, env);
   emit_push(ACC, s);
   env.AddObstacle();
   s << endl;
 
-  s << "\t# Then eval e2." << endl;
+  s << "\t# eval e2." << endl;
   e2->code(s, env);
   s << endl;
 
-  s << "\t# Let's pop e1 to t1, move e2 to t2" << endl;
+  s << "\t# pop e1 to t1, move e2 to t2" << endl;
   emit_addiu(SP, SP, 4, s);
   emit_load(T1, 0, SP, s);
   emit_move(T2, ACC, s);
   s << endl;
 
-  s << "\t# Extract the int inside the object." << endl;
+  s << "\t# get int from object." << endl;
   emit_load(T1, 3, T1, s);
   emit_load(T2, 3, T2, s);
   s << endl;
 
-  s << "\t# Pretend that t1 < t2" << endl;
+  s << "\t# pretend that t1 < t2" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
-  s << "\t# If t1 < t2 jumpto finish" << endl;
+  s << "\t# if t1 < t2 jump to finish" << endl;
   emit_bleq(T1, T2, label_num, s);
 
   emit_load_bool(ACC, BoolConst(0), s);
@@ -1878,19 +1882,19 @@ void leq_class::code(ostream& s, Environment env) {
 
 void comp_class::code(ostream& s, Environment env) {
   s << "\t# the 'not' operator" << endl;
-  s << "\t# First eval the bool" << endl;
+  s << "\t# first eval the bool" << endl;
   e1->code(s, env);
 
-  s << "\t# Extract the int inside the bool" << endl;
+  s << "\t# get int from bool" << endl;
   emit_load(T1, 3, ACC, s);
 
-  s << "\t# Pretend ACC = false, then we need to construct true" << endl;
+  s << "\t# pretend acc = false, then we construct true" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
 
-  s << "\t# If ACC = false, jumpto finish" << endl;
+  s << "\t# if acc = false, jump to finish" << endl;
   emit_beq(T1, ZERO, label_num, s);
 
-  s << "\t# Load false" << endl;
+  s << "\t# load false" << endl;
   emit_load_bool(ACC, BoolConst(0), s);
 
   s << "\t# finish:" << endl;
@@ -1900,9 +1904,6 @@ void comp_class::code(ostream& s, Environment env) {
 }
 
 void int_const_class::code(ostream& s, Environment env) {
-  //
-  // Need to be sure we have an IntEntry *, not an arbitrary Symbol
-  //
   emit_load_int(ACC, inttable.lookup_string(token->get_string()), s);
 }
 
@@ -1918,36 +1919,36 @@ void new__class::code(ostream& s, Environment env) {
   if (type_name == SELF_TYPE) {
     emit_load_address(T1, "class_objTab", s);
 
-    s << "\t# Find class tag." << endl;
+    s << "\t# find class tag." << endl;
     emit_load(T2, 0, SELF, s);
     s << endl;
 
-    s << "\t# Mult 3: Get protObj." << endl;
+    s << "\t# get protObj." << endl;
     emit_sll(T2, T2, 3, s);
     s << endl;
 
     emit_addu(T1, T1, T2, s);
 
-    s << "\t# Push." << endl;
+    s << "\t# push." << endl;
     emit_push(T1, s);
     s << endl;
 
-    s << "\t# Load protObj to ACC." << endl;
+    s << "\t# load protObj to acc." << endl;
     emit_load(ACC, 0, T1, s);
     s << endl;
 
     emit_jal("Object.copy", s);
 
-    s << "\t# Pop protObj addr." << endl;
+    s << "\t# pop protObj address." << endl;
     emit_load(T1, 1, SP, s);
     emit_addiu(SP, SP, 4, s);
     s << endl;
 
-    s << "\t# Get init addr." << endl;
+    s << "\t# get init address." << endl;
     emit_load(T1, 1, T1, s);
     s << endl;
 
-    s << "\t# Goto init." << endl;
+    s << "\t# goto start." << endl;
     emit_jalr(T1, s);
     s << endl;
 
@@ -1973,10 +1974,10 @@ void isvoid_class::code(ostream& s, Environment env) {
   s << "\t# t1 = acc" << endl;
   emit_move(T1, ACC, s);
 
-  s << "\t# First pretend t1 = void: acc = bool(1)" << endl;
+  s << "\t# first pretend t1 = void: acc = bool(1)" << endl;
   emit_load_bool(ACC, BoolConst(1), s);
 
-  s << "\t# if t1 = void: jumpto finish" << endl;
+  s << "\t# if t1 = void: jump to finish" << endl;
   emit_beq(T1, ZERO, label_num, s);
   s << endl;
 
@@ -1994,11 +1995,11 @@ void no_expr_class::code(ostream& s, Environment env) {
 }
 
 void object_class::code(ostream& s, Environment env) {
-  s << "\t# Object:" << endl;
+  s << "\t# object:" << endl;
   int idx;
 
   if ((idx = env.LookUpVar(name)) != -1) {
-    s << "\t# It is a let variable." << endl;
+    s << "\t# it's a let variable." << endl;
     
     emit_load(ACC, idx + 1, SP, s);
     
@@ -2007,7 +2008,7 @@ void object_class::code(ostream& s, Environment env) {
       emit_jal("_GenGC_Assign", s);
     }
   } else if ((idx = env.LookUpParam(name)) != -1) {
-    s << "\t# It is a param." << endl;
+    s << "\t# it's a param." << endl;
     
     emit_load(ACC, idx + 3, FP, s);
     
@@ -2016,7 +2017,7 @@ void object_class::code(ostream& s, Environment env) {
       emit_jal("_GenGC_Assign", s);
     }
   } else if ((idx = env.LookUpAttrib(name)) != -1) {
-    s << "\t# It is an attribute." << endl;
+    s << "\t# it's an attribute." << endl;
     
     emit_load(ACC, idx + 3, SELF, s);
     
@@ -2025,10 +2026,10 @@ void object_class::code(ostream& s, Environment env) {
       emit_jal("_GenGC_Assign", s);
     }
   } else if (name == self) {
-    s << "\t# It is self." << endl;
+    s << "\t# it's self." << endl;
     emit_move(ACC, SELF, s);
   } else {
-    s << "Error! object class" << endl;
+    s << "error! object class" << endl;
   }
 
   s << endl;

@@ -161,3 +161,37 @@ Instructions
 Write-up for PA5
 ----------------
 
+Trabalho realizado por Vinicius Silva Gomes - 2021421869
+para a disciplina DCC053 - Compiladores I, no semestre
+2023/1.
+
+----------------
+
+Com todas as modificacoes realizadas nos arquivos, eh
+possivel entao gerar codigo para programas COOL bem formados.
+Idealmente, depois da analise semantica os programas devem
+conter apenas erros de logica, introduzidos pelo proprio
+programador. No entanto, caso alguma construcao incorreta
+seja percebida no codigo Assembly, o gerador de codigo eh
+capaz de abortar a execucao e informar que houve um
+comportamento inesperado.
+
+Alem disso, para exercitar o gerador de codigo, alguns
+testes foram desenvolvidos para verificar se ele eh capaz
+de gerar o Assembly correto para os mais diversos,
+completos e complexos programas COOL.
+
+Assim como pedido, alem dos testes construidos para as
+mais diversas situacoes possiveis na geracao de codigo,
+o programa example.cl foi alterado para um programa COOL
+mais completo e que nao apresente erros nas fases
+anteriores do compilador e, portanto, pode ter seu codigo
+gerado e executado pelo simulador do MIPS corretamente.
+
+O programa em questao eh um exemplo fornecido de como
+seria uma simulacao do Jogo da Vida de Conway para
+alguns exemplos de estados iniciais e quais seriam as
+futuras geracoes daquele estado. Acredito que entre
+todos os exemplos fornecidos e os testes criados durante
+o desenvolvimento do gerador de codigo, esse eh o maior,
+mais complexo e mais completo programa disponivel.

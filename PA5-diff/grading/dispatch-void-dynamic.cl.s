@@ -529,35 +529,37 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
-	# While loop
+	# let expr
+	# eval init
+	# while loop
 	# start:
 label0:
-	# ACC = pred
+	# acc = pred
 	la	$a0 bool_const0
-	# extract int inside bool
+	# get int from bool
 	lw	$t1 12($a0)
 
-	# if pred == false jumpto finish
+	# if pred == false jump to finish
 	beq	$t1 $zero label1
 
 	la	$a0 int_const1
-	# Jumpto start
+	# jump to start
 	b	label0
-	# Finish:
+	# finish:
 label1:
-	# ACC = void
+	# acc = void
 	move	$a0 $zero
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
+	# dispatch
+	# eval and save the params.
 	# eval the obj in dispatch.
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
 	# if obj = void: abort
@@ -566,21 +568,21 @@ label1:
 	li	$t1 1
 	jal	_dispatch_abort
 label2:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 4($t1)
 
-	# jumpto type_name
+	# jump to type_name
 	jalr		$t1
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -589,14 +591,14 @@ label2:
 	li	$t1 1
 	jal	_dispatch_abort
 label3:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 	# pop

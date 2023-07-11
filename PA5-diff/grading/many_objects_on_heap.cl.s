@@ -544,16 +544,16 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# While loop
+	# while loop
 	# start:
 label0:
-	# ACC = pred
-	# Int operation : Less than
-	# First eval e1 and push.
-	# Neg
-	# Eval e1 and make a copy for result
-	# Object:
-	# It is an attribute.
+	# acc = pred
+	# int operation: less than
+	# eval e1 and push.
+	# neg
+	# eval e1 and make a copy for result
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 
 	jal	Object.copy
@@ -565,39 +565,40 @@ label0:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2.
+	# eval e2.
 	la	$a0 int_const1
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# Extract the int inside the object.
+	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# Pretend that t1 < t2
+	# pretend that t1 < t2
 	la	$a0 bool_const1
-	# If t1 < t2 jumpto finish
+	# if t1 < t2 jump to finish
 	blt	$t1 $t2 label2
 	la	$a0 bool_const0
 label2:
-	# extract int inside bool
+	# get int from bool
 	lw	$t1 12($a0)
 
-	# if pred == false jumpto finish
+	# if pred == false jump to finish
 	beq	$t1 $zero label1
 
-	# Assign. First eval the expr.
+	# assign
+	# eval the expr.
 	la	$a0 Int_protObj
 	jal	Object.copy
 	jal	Int_init
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 12($s0)
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	la	$a0 IO_protObj
 	jal	Object.copy
 	jal	IO_init
@@ -605,59 +606,61 @@ label2:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Object:
-	# It is a let variable.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
 	# pop
 	addiu	$sp $sp 4
 
-	# Assign. First eval the expr.
-	# Int operation : Sub
-	# First eval e1 and push.
-	# Object:
-	# It is an attribute.
+	# assign
+	# eval the expr.
+	# int operation: sub
+	# eval e1 and push.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
-	# Then eval e2 and make a copy for result.
+	# eval e2 and make a copy for result.
 	la	$a0 int_const2
 	jal	Object.copy
 
-	# Let's pop e1 to t1, move e2 to t2
+	# pop e1 to t1, move e2 to t2
 	addiu	$sp $sp 4
 	lw	$t1 0($sp)
 	move	$t2 $a0
 
-	# Extract the int inside the object.
+	# get int from object.
 	lw	$t1 12($t1)
 	lw	$t2 12($t2)
 
-	# Modify the int inside t2.
+	# modify the int inside t2.
 	sub	$t3 $t1 $t2
 	sw	$t3 12($a0)
 
-	# Now find the lvalue.
-	# It is an attribute.
+	# find the lvalue.
+	# it's an attribute.
 	sw	$a0 16($s0)
-	# Jumpto start
+	# jump to start
 	b	label0
-	# Finish:
+	# finish:
 label1:
-	# ACC = void
+	# acc = void
 	move	$a0 $zero
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is an attribute.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's an attribute.
 	lw	$a0 16($s0)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -666,14 +669,14 @@ label1:
 	li	$t1 1
 	jal	_dispatch_abort
 label3:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 16($t1)
 
-	# jumpto out_int
+	# jump to out_int
 	jalr		$t1
 
 

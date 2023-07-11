@@ -556,46 +556,47 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expression and put it to ACC
-	# Let expr
-	# First eval init
+	# let expr
+	# eval init
 	la	$a0 str_const1
 	# push
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 
 	# case expr
-	# First eval e0
+	# eval e0
 	la	$a0 str_const2
-	# If e0 = void, abort
+	# if e0 = void, abort
 	bne	$a0 $zero label0
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_case_abort2
 label0:
-	# T1 = type(acc)
+	# t1 = type(acc)
 	lw	$t1 0($a0)
 	# tag = 4 : goto case 0
 	li	$t2 4
 	beq	$t1 $t2 label1
 
 	# ----------------
-	# No match
+	# no match
 	jal	_case_abort
 	b	label2
 # eval expr 0
 label1:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
-	# Dispatch. First eval and save the params.
-	# Object:
-	# It is a let variable.
+	# dispatch
+	# eval and save the params.
+	# object:
+	# it's a let variable.
 	lw	$a0 4($sp)
 
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -604,18 +605,18 @@ label1:
 	li	$t1 1
 	jal	_dispatch_abort
 label3:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 	addiu	$sp $sp 4
-	# Jumpto finish
+	# jump to finish
 	b	label2
 #finish:
 label2:
@@ -623,13 +624,14 @@ label2:
 	# pop
 	addiu	$sp $sp 4
 
-	# Dispatch. First eval and save the params.
+	# dispatch
+	# eval and save the params.
 	la	$a0 str_const3
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Object:
-	# It is self.
+	# object:
+	# it's self.
 	move	$a0 $s0
 
 	# if obj = void: abort
@@ -638,14 +640,14 @@ label2:
 	li	$t1 1
 	jal	_dispatch_abort
 label4:
-	# Now we locate the method in the dispatch table.
+	# locate the method in the dispatch table.
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
 	lw	$t1 12($t1)
 
-	# jumpto out_string
+	# jump to out_string
 	jalr		$t1
 
 
